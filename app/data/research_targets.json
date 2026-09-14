@@ -1,0 +1,36 @@
+{
+  "version": "2026-09-14",
+  "country": "UAE",
+  "targets": [
+    {"slug": "adcb-365-cashback", "card_name": "ADCB 365 Cashback Credit Card", "issuer": "ADCB", "domain": "adcb.com", "card_type": "cashback"},
+    {"slug": "emirates-islamic-cashback-plus", "card_name": "Emirates Islamic Cashback Plus Credit Card", "issuer": "Emirates Islamic", "domain": "emiratesislamic.ae", "card_type": "cashback"},
+    {"slug": "mashreq-cashback", "card_name": "Mashreq Cashback Credit Card", "issuer": "Mashreq", "domain": "mashreq.com", "card_type": "cashback"},
+    {"slug": "rakbank-world", "card_name": "RAKBANK World Credit Card", "issuer": "RAKBANK", "domain": "rakbank.ae", "card_type": "cashback"},
+    {"slug": "rakbank-titanium", "card_name": "RAKBANK Titanium Credit Card", "issuer": "RAKBANK", "domain": "rakbank.ae", "card_type": "cashback"},
+    {"slug": "enbd-lulu-titanium", "card_name": "Emirates NBD Lulu Titanium Credit Card", "issuer": "Emirates NBD", "domain": "emiratesnbd.com", "card_type": "cashback"},
+    {"slug": "enbd-skywards-signature", "card_name": "Emirates NBD Skywards Signature Credit Card", "issuer": "Emirates NBD", "domain": "emiratesnbd.com", "card_type": "miles"},
+    {"slug": "fab-cashback", "card_name": "FAB Cashback Credit Card", "issuer": "FAB", "domain": "bankfab.com", "card_type": "cashback"},
+    {"slug": "hsbc-cashback", "card_name": "HSBC Cashback Credit Card", "issuer": "HSBC UAE", "domain": "hsbc.ae", "card_type": "cashback"},
+    {"slug": "sc-simply-cash", "card_name": "Standard Chartered Simply Cash Credit Card", "issuer": "Standard Chartered UAE", "domain": "sc.com", "card_type": "cashback"},
+    {"slug": "cbd-super-saver", "card_name": "CBD Super Saver Credit Card", "issuer": "Commercial Bank of Dubai", "domain": "cbd.ae", "card_type": "cashback"},
+    {"slug": "adib-cashback", "card_name": "ADIB Cashback Visa Card", "issuer": "ADIB", "domain": "adib.ae", "card_type": "cashback"},
+    {"slug": "dib-prime", "card_name": "Dubai Islamic Bank Prime Credit Card", "issuer": "Dubai Islamic Bank", "domain": "dib.ae", "card_type": "cashback"},
+    {"slug": "adcb-touchpoints", "card_name": "ADCB TouchPoints Credit Card", "issuer": "ADCB", "domain": "adcb.com", "card_type": "points"},
+    {"slug": "wio-personal", "card_name": "Wio Personal Credit Card", "issuer": "Wio Bank", "domain": "wio.io", "card_type": "cashback"}
+  ],
+  "query_templates": [
+    "\"{card_name}\" site:{domain}",
+    "\"{card_name}\" rewards site:{domain}",
+    "\"{card_name}\" cashback terms site:{domain}",
+    "\"{card_name}\" \"annual fee\" site:{domain}",
+    "\"{card_name}\" \"Schedule of Charges\" site:{domain}",
+    "\"{card_name}\" \"Key Facts Statement\" site:{domain}",
+    "\"{card_name}\" \"minimum salary\" site:{domain}",
+    "\"{card_name}\" \"minimum spend\" site:{domain}",
+    "\"{card_name}\" cashback cap site:{domain}",
+    "\"{card_name}\" \"foreign transaction\" site:{domain}",
+    "\"{card_name}\" international transactions site:{domain}",
+    "\"{card_name}\" exclusions site:{domain}",
+    "\"{card_name}\" PDF site:{domain}"
+  ]
+}

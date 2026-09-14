@@ -1,0 +1,1379 @@
+{
+  "dataset_version": "2026-09-14.2",
+  "country": "UAE",
+  "research_notes": "Every value below was retrieved during research on 2026-09-14. Fields sourced from an official issuer page are tier 1; fields that could only be established from reputable secondary coverage are tier 5 and flagged PARTIALLY_VERIFIED. Nothing here is invented. Where research did not establish a value, the field is absent or explicitly UNKNOWN.",
+  "cards": [
+    {
+      "card_id": "adcb-365-cashback",
+      "card_name": "ADCB 365 Cashback Credit Card",
+      "issuer": "Abu Dhabi Commercial Bank (ADCB)",
+      "network": "Visa",
+      "card_type": "cashback",
+      "status": "VERIFIED",
+      "version": 1,
+      "retrieved_at": "2026-09-14T00:00:00Z",
+      "last_verified": "2026-09-14T00:00:00Z",
+      "effective_from": "2026-01-01",
+      "notes": "Fully specified cashback card: every critical reward field is stated on the official product page, including the card-level monthly cap and the minimum monthly spend gate.",
+      "reward_rules": [
+        {
+          "category": "groceries",
+          "scope": "DOMESTIC",
+          "rate": 0.03,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "dining",
+          "scope": "DOMESTIC",
+          "rate": 0.06,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "VERIFIED",
+          "notes": "Includes online food orders."
+        },
+        {
+          "category": "fuel",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "VERIFIED",
+          "notes": "Fuel and Salik."
+        },
+        {
+          "category": "entertainment",
+          "scope": "ANY",
+          "rate": 0.05,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Official rate is 5% for home digital entertainment subscriptions specifically, not all entertainment spend. Applying it to the whole entertainment category is an over-estimate for users whose entertainment spend is mostly cinema or events."
+        },
+        {
+          "category": "online",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Falls under other retail spends unless the merchant is a qualifying subscription."
+        },
+        {
+          "category": "travel",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Treated as other retail; no travel-specific rate is published."
+        },
+        {
+          "category": "fashion",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "VERIFIED",
+          "notes": "Other retail spends."
+        },
+        {
+          "category": "utilities",
+          "scope": "DOMESTIC",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "Bill payments are not eligible for cashback."
+        },
+        {
+          "category": "government",
+          "scope": "DOMESTIC",
+          "rate": 0.005,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Modelled as the published 0.5% select-category rate. The official select-category merchant list was not retrieved."
+        },
+        {
+          "category": "education",
+          "scope": "DOMESTIC",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "School fees are not eligible for cashback."
+        },
+        {
+          "category": "telecom",
+          "scope": "DOMESTIC",
+          "rate": 0.005,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "INTERNATIONAL",
+          "rate": 0.01,
+          "min_monthly_spend_required": 5000,
+          "verification_status": "VERIFIED",
+          "notes": "1% on international retail spends excluding EU; EU spends earn 0.5%. The engine applies the non-EU rate because the profile does not capture EU split."
+        }
+      ],
+      "card_level_caps": {
+        "monthly_cap_amount": 1000,
+        "cap_scope": "CARD_TOTAL",
+        "verification_status": "VERIFIED"
+      },
+      "min_monthly_spend_required": 5000,
+      "fees": [
+        {
+          "fee_type": "ANNUAL_FEE",
+          "amount": 383.25,
+          "unit": "AED",
+          "first_year_free": true,
+          "verification_status": "VERIFIED",
+          "notes": "Inclusive of VAT, applies from the second year."
+        },
+        {
+          "fee_type": "FX_FEE",
+          "amount": null,
+          "unit": "PERCENT",
+          "verification_status": "UNKNOWN",
+          "notes": "The product page defers to the schedule of charges; the percentage was not established during research."
+        }
+      ],
+      "eligibility": {
+        "min_monthly_salary": 5000,
+        "min_age": 18,
+        "residency_required": true,
+        "verification_status": "VERIFIED",
+        "notes": "Alternative qualification via eligibility for a credit limit of at least AED 3,000."
+      },
+      "benefits": [
+        {
+          "benefit_type": "cinema",
+          "description": "Buy one get one free VOX Cinemas tickets, up to 4 per month",
+          "verification_status": "VERIFIED"
+        },
+        {
+          "benefit_type": "insurance",
+          "description": "Complimentary credit shield life cover",
+          "verification_status": "VERIFIED"
+        }
+      ],
+      "exclusions": [
+        "Bill payments",
+        "School fees",
+        "Transactions made on ADCB channels"
+      ],
+      "sources": [
+        {
+          "field_name": "grocery_cashback_rate",
+          "value": "0.03",
+          "unit": "percentage",
+          "source_name": "ADCB official product page",
+          "source_url": "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page lists 3% on groceries and supermarkets."
+        },
+        {
+          "field_name": "dining_cashback_rate",
+          "value": "0.06",
+          "unit": "percentage",
+          "source_name": "ADCB official product page",
+          "source_url": "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page lists 6% on dining including online orders."
+        },
+        {
+          "field_name": "fuel_cashback_rate",
+          "value": "0.05",
+          "unit": "percentage",
+          "source_name": "ADCB official product page",
+          "source_url": "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page lists 5% on fuel and Salik."
+        },
+        {
+          "field_name": "reward_cap",
+          "value": "1000",
+          "unit": "AED per month",
+          "source_name": "ADCB official product page",
+          "source_url": "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page states a maximum monthly cashback of AED 1,000."
+        },
+        {
+          "field_name": "min_monthly_spend",
+          "value": "5000",
+          "unit": "AED per month",
+          "source_name": "ADCB official product page",
+          "source_url": "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Minimum retail spend of AED 5,000 per calendar month required to earn."
+        },
+        {
+          "field_name": "annual_fee",
+          "value": "383.25",
+          "unit": "AED",
+          "source_name": "ADCB official product page",
+          "source_url": "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Annual fee including VAT applies from the second year onwards."
+        },
+        {
+          "field_name": "eligibility_min_salary",
+          "value": "5000",
+          "unit": "AED per month",
+          "source_name": "ADCB official product page",
+          "source_url": "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Stated minimum salary requirement on the eligibility section."
+        },
+        {
+          "field_name": "fx_fee",
+          "value": "UNKNOWN",
+          "unit": "percentage",
+          "source_name": "ADCB schedule of charges",
+          "source_url": "https://www.adcb.com/en/tools-resources/charges-fees/",
+          "source_type": "official_fees_page",
+          "source_tier": 2,
+          "verification_status": "UNKNOWN",
+          "evidence": "Product page defers to the schedule of charges; the specific percentage was not established."
+        }
+      ]
+    },
+    {
+      "card_id": "emirates-islamic-cashback-plus",
+      "card_name": "Emirates Islamic Cashback Plus Credit Card",
+      "issuer": "Emirates Islamic",
+      "network": "Visa",
+      "card_type": "cashback",
+      "status": "PARTIALLY_VERIFIED",
+      "version": 1,
+      "retrieved_at": "2026-09-14T00:00:00Z",
+      "last_verified": "2026-09-14T00:00:00Z",
+      "notes": "Tiered card: the headline rate depends on total monthly spend. Only four categories earn. Tier thresholds and the per-category cap amount came from secondary coverage; the existence of tiers and caps is stated officially.",
+      "reward_rules": [
+        {
+          "category": "groceries",
+          "scope": "ANY",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "tier_max_monthly_spend": 9999,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "groceries",
+          "scope": "ANY",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "tier_max_monthly_spend": 17499,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "groceries",
+          "scope": "ANY",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 17500,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "dining",
+          "scope": "ANY",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "tier_max_monthly_spend": 9999,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "dining",
+          "scope": "ANY",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "tier_max_monthly_spend": 17499,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "dining",
+          "scope": "ANY",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 17500,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "education",
+          "scope": "ANY",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "tier_max_monthly_spend": 9999,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "education",
+          "scope": "ANY",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "tier_max_monthly_spend": 17499,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "education",
+          "scope": "ANY",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 17500,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "telecom",
+          "scope": "ANY",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "tier_max_monthly_spend": 9999,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Must be paid through the telecom provider's own channels to qualify."
+        },
+        {
+          "category": "telecom",
+          "scope": "ANY",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "tier_max_monthly_spend": 17499,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "telecom",
+          "scope": "ANY",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 17500,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "fuel",
+          "scope": "ANY",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "travel",
+          "scope": "ANY",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "online",
+          "scope": "ANY",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "utilities",
+          "scope": "ANY",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "government",
+          "scope": "ANY",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "fashion",
+          "scope": "ANY",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "entertainment",
+          "scope": "ANY",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "ANY",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "Categories outside the four eligible ones earn nothing, but their spend still counts toward the tier threshold."
+        }
+      ],
+      "min_monthly_spend_required": 3000,
+      "fees": [
+        {
+          "fee_type": "ANNUAL_FEE",
+          "amount": 299,
+          "unit": "AED",
+          "first_year_free": true,
+          "waiver_min_annual_spend": 30000,
+          "verification_status": "CONFLICTING",
+          "notes": "Official product page states AED 299 for the primary card. Secondary coverage states AED 313.95, which appears to be the VAT-inclusive figure. First year waived on AED 5,000 retail spend within 90 days; subsequent years waived on AED 30,000 annual spend."
+        },
+        {
+          "fee_type": "FX_FEE",
+          "amount": null,
+          "unit": "PERCENT",
+          "verification_status": "UNKNOWN"
+        }
+      ],
+      "eligibility": {
+        "min_monthly_salary": 12000,
+        "residency_required": true,
+        "verification_status": "PARTIALLY_VERIFIED",
+        "notes": "Minimum salary from secondary coverage; not established on an official page during research."
+      },
+      "benefits": [
+        {
+          "benefit_type": "lounge_access",
+          "description": "Unlimited complimentary access to 1,000+ airport lounges worldwide",
+          "verification_status": "VERIFIED"
+        },
+        {
+          "benefit_type": "golf",
+          "description": "Two complimentary golf rounds per month",
+          "verification_status": "VERIFIED"
+        }
+      ],
+      "exclusions": [
+        "Bill payments made through Emirates Islamic banking channels",
+        "Telecom payments not made through the provider's own channels"
+      ],
+      "sources": [
+        {
+          "field_name": "reward_category",
+          "value": "supermarkets, education, dining, telecom",
+          "source_name": "Emirates Islamic official product page",
+          "source_url": "https://www.emiratesislamic.ae/en/cards/credit-cards/cashback-plus-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page lists up to 10% on those four categories, in the UAE and abroad."
+        },
+        {
+          "field_name": "min_monthly_spend",
+          "value": "3000",
+          "unit": "AED per month",
+          "source_name": "Emirates Islamic official terms and conditions",
+          "source_url": "https://www.emiratesislamic.ae/en/terms-and-conditions/cashback-plus-credit-card-tc",
+          "source_type": "official_terms",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "Cashback is subject to meeting a minimum monthly expenditure of AED 3,000."
+        },
+        {
+          "field_name": "reward_cap",
+          "value": "200",
+          "unit": "AED per category per month",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/emirates-islamic-cashback-plus-credit-card/details",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "Official page confirms a per-category cap exists but the table was not retrieved; the amount comes from secondary coverage."
+        },
+        {
+          "field_name": "reward_rate_tiers",
+          "value": "3% / 5% / 10% by monthly spend band",
+          "source_name": "CardsMatcher",
+          "source_url": "https://cardsmatcher.com/bank/emirates-islamic-cashback-plus-credit-card/",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "Official page confirms the rate is based on spend tiers; the band values come from secondary coverage."
+        },
+        {
+          "field_name": "annual_fee",
+          "value": "299",
+          "unit": "AED",
+          "source_name": "Emirates Islamic official product page",
+          "source_url": "https://www.emiratesislamic.ae/en/cards/credit-cards/cashback-plus-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "CONFLICTING",
+          "evidence": "Official page states AED 299 for the primary cardholder; secondary coverage lists AED 313.95."
+        },
+        {
+          "field_name": "annual_fee_waiver",
+          "value": "30000",
+          "unit": "AED per year",
+          "source_name": "Emirates Islamic official terms and conditions",
+          "source_url": "https://www.emiratesislamic.ae/en/terms-and-conditions/cashback-plus-credit-card-tc",
+          "source_type": "official_terms",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "Subsequent-year waiver requires a minimum annual spend of AED 30,000."
+        },
+        {
+          "field_name": "eligibility_min_salary",
+          "value": "12000",
+          "unit": "AED per month",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/emirates-islamic-cashback-plus-credit-card/details",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "field_name": "fx_fee",
+          "value": "UNKNOWN",
+          "unit": "percentage",
+          "source_name": "not established",
+          "source_url": "https://www.emiratesislamic.ae/en/terms-and-conditions/cashback-plus-credit-card-tc",
+          "source_type": "official_terms",
+          "source_tier": 2,
+          "verification_status": "UNKNOWN"
+        }
+      ]
+    },
+    {
+      "card_id": "mashreq-cashback",
+      "card_name": "Mashreq Cashback Credit Card",
+      "issuer": "Mashreq",
+      "network": "Visa",
+      "card_type": "cashback",
+      "status": "PARTIALLY_VERIFIED",
+      "version": 1,
+      "retrieved_at": "2026-09-14T00:00:00Z",
+      "last_verified": "2026-09-14T00:00:00Z",
+      "modelling_limitation": "The official cap is AED 50 per merchant per calendar month. A spend profile records category totals, not the merchant split within a category, so no honest per-merchant cap can be applied. Any value shown for this card is an upper bound.",
+      "notes": "Free-for-life card with a strong dining rate. The per-merchant cap structure makes a precise annual figure impossible from a category-level profile.",
+      "reward_rules": [
+        {
+          "category": "dining",
+          "scope": "ANY",
+          "rate": 0.05,
+          "monthly_cap_amount": 50,
+          "cap_scope": "PER_MERCHANT",
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Rate from secondary coverage; the per-merchant cap is official."
+        },
+        {
+          "category": "groceries",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "monthly_cap_amount": 50,
+          "cap_scope": "PER_MERCHANT",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "online",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "monthly_cap_amount": 50,
+          "cap_scope": "PER_MERCHANT",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "fashion",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "monthly_cap_amount": 50,
+          "cap_scope": "PER_MERCHANT",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "entertainment",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "monthly_cap_amount": 50,
+          "cap_scope": "PER_MERCHANT",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "travel",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "monthly_cap_amount": 50,
+          "cap_scope": "PER_MERCHANT",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "monthly_cap_amount": 50,
+          "cap_scope": "PER_MERCHANT",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "fuel",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "verification_status": "CONFLICTING",
+          "notes": "Mashreq Al Islami page states 0.15% for this category group; secondary coverage of the conventional card states 0.33%."
+        },
+        {
+          "category": "utilities",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "verification_status": "CONFLICTING"
+        },
+        {
+          "category": "government",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "verification_status": "CONFLICTING"
+        },
+        {
+          "category": "education",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "verification_status": "CONFLICTING"
+        },
+        {
+          "category": "telecom",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "verification_status": "CONFLICTING"
+        },
+        {
+          "category": "other",
+          "scope": "INTERNATIONAL",
+          "rate": 0.01,
+          "verification_status": "PARTIALLY_VERIFIED"
+        }
+      ],
+      "fees": [
+        {
+          "fee_type": "ANNUAL_FEE",
+          "amount": 0.0,
+          "unit": "AED",
+          "verification_status": "VERIFIED",
+          "notes": "Free for life for primary and supplementary cards."
+        },
+        {
+          "fee_type": "FX_FEE",
+          "amount": null,
+          "unit": "PERCENT",
+          "verification_status": "UNKNOWN"
+        }
+      ],
+      "eligibility": {
+        "min_monthly_salary": 5000,
+        "residency_required": true,
+        "verification_status": "VERIFIED"
+      },
+      "benefits": [
+        {
+          "benefit_type": "cinema",
+          "description": "50% off Deluxe-Plus cinema seats, up to 8 tickets per month",
+          "verification_status": "VERIFIED"
+        }
+      ],
+      "exclusions": [
+        "Utility bill payments made through Mashreq banking channels"
+      ],
+      "sources": [
+        {
+          "field_name": "annual_fee",
+          "value": "0",
+          "unit": "AED",
+          "source_name": "Mashreq official product page",
+          "source_url": "https://www.mashreq.com/en/uae/neo/cards/credit-cards/cashback-credit-card/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page states no annual fees for primary and supplementary cards."
+        },
+        {
+          "field_name": "reward_cap",
+          "value": "50",
+          "unit": "AED per merchant per month",
+          "source_name": "Mashreq official product page",
+          "source_url": "https://www.mashreq.com/en/uae/neo/cards/credit-cards/cashback-credit-card/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page states a maximum cashback of AED 50 per merchant per month."
+        },
+        {
+          "field_name": "eligibility_min_salary",
+          "value": "5000",
+          "unit": "AED per month",
+          "source_name": "Mashreq official product page",
+          "source_url": "https://www.mashreq.com/en/uae/neo/cards/credit-cards/cashback-credit-card/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page states a minimum monthly income of AED 5,000."
+        },
+        {
+          "field_name": "dining_cashback_rate",
+          "value": "0.05",
+          "unit": "percentage",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/mashreq-cashback-credit-card/details",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "field_name": "low_category_rate",
+          "value": "0.0015",
+          "unit": "percentage",
+          "source_name": "Mashreq Al Islami official product page",
+          "source_url": "https://www.mashreqalislami.com/en/uae/neo/cards/credit-cards/cashback-credit-card/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "CONFLICTING",
+          "evidence": "Islamic variant states 0.15% for government, utilities, education, charity, fuel, rental and telecom; secondary coverage of the conventional card states 0.33%."
+        },
+        {
+          "field_name": "fx_fee",
+          "value": "UNKNOWN",
+          "unit": "percentage",
+          "source_name": "not established",
+          "source_url": "https://www.mashreq.com/en/uae/neo/cards/credit-cards/cashback-credit-card/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "UNKNOWN"
+        }
+      ]
+    },
+    {
+      "card_id": "rakbank-world",
+      "card_name": "RAKBANK World Credit Card",
+      "issuer": "RAKBANK",
+      "network": "Mastercard",
+      "card_type": "cashback",
+      "status": "PARTIALLY_VERIFIED",
+      "version": 1,
+      "retrieved_at": "2026-09-14T00:00:00Z",
+      "last_verified": "2026-09-14T00:00:00Z",
+      "notes": "Official page confirms up to 10% on travel, dining and groceries and that monthly cashback is capped, but the cap table itself was not retrieved. Cap is a critical field, so this card is carried without a precise ranking position.",
+      "reward_rules": [
+        {
+          "category": "travel",
+          "scope": "ANY",
+          "rate": 0.1,
+          "cap_scope": "PER_CATEGORY",
+          "monthly_cap_amount": null,
+          "min_monthly_spend_required": 10000,
+          "verification_status": "UNKNOWN",
+          "notes": "Headline rate is official; the per-category cap that bounds it is not established."
+        },
+        {
+          "category": "dining",
+          "scope": "ANY",
+          "rate": 0.1,
+          "cap_scope": "PER_CATEGORY",
+          "monthly_cap_amount": null,
+          "min_monthly_spend_required": 10000,
+          "verification_status": "UNKNOWN"
+        },
+        {
+          "category": "groceries",
+          "scope": "ANY",
+          "rate": 0.1,
+          "cap_scope": "PER_CATEGORY",
+          "monthly_cap_amount": null,
+          "min_monthly_spend_required": 10000,
+          "verification_status": "UNKNOWN"
+        }
+      ],
+      "min_monthly_spend_required": 10000,
+      "fees": [
+        {
+          "fee_type": "ANNUAL_FEE",
+          "amount": 950,
+          "unit": "AED",
+          "first_year_free": true,
+          "waiver_min_annual_spend": 100000,
+          "verification_status": "CONFLICTING",
+          "notes": "Secondary sources disagree: AED 950 and AED 997.50 both appear. Not established on an official page during research."
+        },
+        {
+          "fee_type": "FX_FEE",
+          "amount": null,
+          "unit": "PERCENT",
+          "verification_status": "UNKNOWN"
+        }
+      ],
+      "eligibility": {
+        "min_monthly_salary": 20000,
+        "min_age": 21,
+        "residency_required": true,
+        "verification_status": "PARTIALLY_VERIFIED"
+      },
+      "benefits": [
+        {
+          "benefit_type": "lounge_access",
+          "description": "Access to up to 1,200 airport lounges worldwide",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "benefit_type": "airport_transfer",
+          "description": "Two complimentary airport transfers per year",
+          "verification_status": "PARTIALLY_VERIFIED"
+        }
+      ],
+      "exclusions": [],
+      "sources": [
+        {
+          "field_name": "reward_category",
+          "value": "travel, dining, groceries up to 10%",
+          "source_name": "RAKBANK official product page",
+          "source_url": "https://www.rakbank.ae/en/cards/credit-cards/world-credit-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page advertises up to 10% cashback on travel, dining and groceries."
+        },
+        {
+          "field_name": "reward_cap",
+          "value": "UNKNOWN",
+          "unit": "AED per month",
+          "source_name": "not established",
+          "source_url": "https://www.rakbank.ae/en/cards/credit-cards/world-credit-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "UNKNOWN",
+          "evidence": "Official FAQ confirms monthly cashback is capped but the cap table was not retrieved."
+        },
+        {
+          "field_name": "annual_fee",
+          "value": "950",
+          "unit": "AED",
+          "source_name": "Skyscanner editorial coverage",
+          "source_url": "https://www.skyscanner.ae/tips-and-inspiration/jet-set-save-earn-10-cashback-with-the-rakbank-world-credit-card",
+          "source_type": "secondary_editorial",
+          "source_tier": 5,
+          "verification_status": "CONFLICTING",
+          "evidence": "States AED 950 from year two unless AED 100,000 annual spend; another secondary source states AED 997.50."
+        },
+        {
+          "field_name": "eligibility_min_salary",
+          "value": "20000",
+          "unit": "AED per month",
+          "source_name": "Skyscanner editorial coverage",
+          "source_url": "https://www.skyscanner.ae/tips-and-inspiration/jet-set-save-earn-10-cashback-with-the-rakbank-world-credit-card",
+          "source_type": "secondary_editorial",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "field_name": "min_monthly_spend",
+          "value": "10000",
+          "unit": "AED per month",
+          "source_name": "Skyscanner editorial coverage",
+          "source_url": "https://www.skyscanner.ae/tips-and-inspiration/jet-set-save-earn-10-cashback-with-the-rakbank-world-credit-card",
+          "source_type": "secondary_editorial",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "field_name": "fx_fee",
+          "value": "UNKNOWN",
+          "unit": "percentage",
+          "source_name": "not established",
+          "source_url": "https://www.rakbank.ae/en/cards/credit-cards/world-credit-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "UNKNOWN"
+        }
+      ]
+    },
+    {
+      "card_id": "hsbc-live-plus",
+      "card_name": "HSBC Live+ Credit Card",
+      "issuer": "HSBC UAE",
+      "network": "Visa",
+      "card_type": "cashback",
+      "status": "PARTIALLY_VERIFIED",
+      "version": 1,
+      "retrieved_at": "2026-09-14T00:00:00Z",
+      "last_verified": "2026-09-14T00:00:00Z",
+      "notes": "Per-category rates, per-category caps and the minimum monthly spend are all stated officially. The annual fee AMOUNT is not stated on the product page; only the waiver condition is. Because the waiver is verified, the fee is known to be zero for any profile meeting it.",
+      "reward_rules": [
+        {
+          "category": "dining",
+          "scope": "ANY",
+          "rate": 0.06,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "fuel",
+          "scope": "ANY",
+          "rate": 0.05,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "groceries",
+          "scope": "ANY",
+          "rate": 0.02,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "entertainment",
+          "scope": "ANY",
+          "rate": 0.02,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "education",
+          "scope": "ANY",
+          "rate": 0.02,
+          "monthly_cap_amount": 200,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Education is named as a cashback category in the official terms; its rate was not separately stated, so the 2% non-headline rate is applied."
+        },
+        {
+          "category": "travel",
+          "scope": "ANY",
+          "rate": 0.005,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "online",
+          "scope": "ANY",
+          "rate": 0.005,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "utilities",
+          "scope": "ANY",
+          "rate": 0.005,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "government",
+          "scope": "ANY",
+          "rate": 0.005,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "fashion",
+          "scope": "ANY",
+          "rate": 0.005,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "telecom",
+          "scope": "ANY",
+          "rate": 0.005,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "ANY",
+          "rate": 0.005,
+          "verification_status": "VERIFIED",
+          "notes": "0.5% on all other spends, and on everything in a month where total spend is below AED 3,000."
+        },
+        {
+          "category": "other",
+          "scope": "INTERNATIONAL",
+          "rate": 0.005,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Official terms confirm non-AED spends are converted then cashback calculated, but no separate international rate is published; the all-other-spends rate is applied."
+        }
+      ],
+      "min_monthly_spend_required": 3000,
+      "fees": [
+        {
+          "fee_type": "ANNUAL_FEE",
+          "amount": null,
+          "unit": "AED",
+          "first_year_free": true,
+          "waiver_min_annual_spend": 12000,
+          "verification_status": "UNKNOWN",
+          "notes": "Official page states no annual fee in year one and a waiver from year two on AED 12,000 annual spend. The fee amount charged if the waiver is missed was not established for this card."
+        },
+        {
+          "fee_type": "FX_FEE",
+          "amount": null,
+          "unit": "PERCENT",
+          "verification_status": "UNKNOWN"
+        }
+      ],
+      "eligibility": {
+        "min_monthly_salary": null,
+        "residency_required": true,
+        "verification_status": "UNKNOWN",
+        "notes": "Minimum salary for Live+ was not established on an official page during research."
+      },
+      "benefits": [
+        {
+          "benefit_type": "dining",
+          "description": "Complimentary Zomato Gold membership",
+          "verification_status": "VERIFIED"
+        },
+        {
+          "benefit_type": "subscription",
+          "description": "Complimentary 12-month Careem Plus subscription",
+          "verification_status": "VERIFIED"
+        }
+      ],
+      "exclusions": [
+        "Fees and charges are excluded when calculating cashback",
+        "Only one cashback category applies per transaction"
+      ],
+      "sources": [
+        {
+          "field_name": "reward_rate",
+          "value": "0.06",
+          "unit": "percentage",
+          "source_name": "HSBC UAE official product page",
+          "source_url": "https://www.hsbc.ae/credit-cards/products/live-plus/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page states 6% on dining, capped per statement cycle."
+        },
+        {
+          "field_name": "reward_cap",
+          "value": "200",
+          "unit": "AED per category per statement cycle",
+          "source_name": "HSBC UAE official product page",
+          "source_url": "https://www.hsbc.ae/credit-cards/products/live-plus/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Each cashback category is capped at AED 200 per statement cycle."
+        },
+        {
+          "field_name": "min_monthly_spend",
+          "value": "3000",
+          "unit": "AED per month",
+          "source_name": "HSBC Live+ official terms and conditions",
+          "source_url": "https://www.hsbc.ae/content/dam/hsbc/ae/docs/en/cards/cashback-credit-card-tncs.pdf",
+          "source_type": "official_terms",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "Official terms require a minimum retail spend of AED 3,000 per statement cycle to earn category cashback."
+        },
+        {
+          "field_name": "annual_fee_waiver",
+          "value": "12000",
+          "unit": "AED per year",
+          "source_name": "HSBC UAE official product page",
+          "source_url": "https://www.hsbc.ae/credit-cards/products/live-plus/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "No annual fee in year one, waived thereafter on at least AED 12,000 annual spend."
+        },
+        {
+          "field_name": "annual_fee",
+          "value": "UNKNOWN",
+          "unit": "AED",
+          "source_name": "not established",
+          "source_url": "https://www.hsbc.ae/credit-cards/products/live-plus/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "UNKNOWN",
+          "evidence": "The fee amount charged when the waiver is not met was not stated on the retrieved official pages."
+        },
+        {
+          "field_name": "fx_fee",
+          "value": "UNKNOWN",
+          "unit": "percentage",
+          "source_name": "not established",
+          "source_url": "https://www.hsbc.ae/credit-cards/products/live-plus/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "UNKNOWN"
+        }
+      ]
+    },
+    {
+      "card_id": "hsbc-cash-plus",
+      "card_name": "HSBC Cash+ Credit Card",
+      "issuer": "HSBC UAE",
+      "network": "Visa",
+      "card_type": "cashback",
+      "status": "PARTIALLY_VERIFIED",
+      "version": 1,
+      "retrieved_at": "2026-09-14T00:00:00Z",
+      "last_verified": "2026-09-14T00:00:00Z",
+      "notes": "Flat-rate card with an officially stated fee and waiver. The 10% bonus tiers are stated as a bonus on total cashback rather than a category rate and are not modelled.",
+      "reward_rules": [
+        {
+          "category": "groceries",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "dining",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "fuel",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "travel",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "online",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "utilities",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "government",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "fashion",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "entertainment",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "education",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "telecom",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "ANY",
+          "rate": 0.01,
+          "verification_status": "VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "INTERNATIONAL",
+          "rate": 0.01,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Official page states 1% on all purchases with no caps; no separate international rate is published."
+        }
+      ],
+      "fees": [
+        {
+          "fee_type": "ANNUAL_FEE",
+          "amount": 1000,
+          "unit": "AED",
+          "first_year_free": true,
+          "waiver_min_annual_spend": 24000,
+          "verification_status": "VERIFIED",
+          "notes": "AED 1,000, free in year one and waived from year two on AED 24,000 annual spend."
+        },
+        {
+          "fee_type": "FX_FEE",
+          "amount": null,
+          "unit": "PERCENT",
+          "verification_status": "UNKNOWN"
+        }
+      ],
+      "eligibility": {
+        "min_monthly_salary": null,
+        "residency_required": true,
+        "verification_status": "UNKNOWN",
+        "notes": "Minimum salary was not separately established for this card during research."
+      },
+      "benefits": [
+        {
+          "benefit_type": "subscription",
+          "description": "Complimentary 12-month Careem Plus subscription",
+          "verification_status": "VERIFIED"
+        }
+      ],
+      "exclusions": [],
+      "sources": [
+        {
+          "field_name": "reward_rate",
+          "value": "0.01",
+          "unit": "percentage",
+          "source_name": "HSBC UAE official product page",
+          "source_url": "https://www.hsbc.ae/credit-cards/products/cash-plus/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page states 1% cashback every day on all purchases with no minimum spend or earning caps."
+        },
+        {
+          "field_name": "reward_cap",
+          "value": "none",
+          "unit": "AED",
+          "source_name": "HSBC UAE official product page",
+          "source_url": "https://www.hsbc.ae/credit-cards/products/cash-plus/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Official page states there are no earning caps."
+        },
+        {
+          "field_name": "annual_fee",
+          "value": "1000",
+          "unit": "AED",
+          "source_name": "HSBC UAE official comparison page",
+          "source_url": "https://www.hsbc.ae/credit-cards/compare/cash-plus-credit-card/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Annual fee of AED 1,000, waived from the second year on a minimum spend of AED 24,000."
+        },
+        {
+          "field_name": "annual_fee_waiver",
+          "value": "24000",
+          "unit": "AED per year",
+          "source_name": "HSBC UAE official comparison page",
+          "source_url": "https://www.hsbc.ae/credit-cards/compare/cash-plus-credit-card/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "VERIFIED",
+          "evidence": "Waiver from the second year onwards subject to AED 24,000 minimum spend."
+        },
+        {
+          "field_name": "fx_fee",
+          "value": "UNKNOWN",
+          "unit": "percentage",
+          "source_name": "not established",
+          "source_url": "https://www.hsbc.ae/credit-cards/products/cash-plus/",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "UNKNOWN"
+        }
+      ]
+    }
+  ],
+  "reward_value_assumptions": [],
+  "research_queue": [
+    {
+      "issuer": "Emirates NBD",
+      "candidate_cards": [
+        "Lulu Titanium",
+        "Skywards Signature",
+        "noon One Visa"
+      ],
+      "reason": "grocery co-brand and miles coverage"
+    },
+    {
+      "issuer": "First Abu Dhabi Bank",
+      "candidate_cards": [
+        "FAB Cashback Card"
+      ],
+      "reason": "flat-rate cashback comparator"
+    },
+    {
+      "issuer": "Standard Chartered UAE",
+      "candidate_cards": [
+        "Simply Cash",
+        "Smart Credit Card"
+      ],
+      "reason": "simple deterministic rules"
+    },
+    {
+      "issuer": "Commercial Bank of Dubai",
+      "candidate_cards": [
+        "Super Saver"
+      ],
+      "reason": "grocery and fuel specialisation"
+    },
+    {
+      "issuer": "ADCB",
+      "candidate_cards": [
+        "TouchPoints"
+      ],
+      "reason": "points card to exercise reward valuation path"
+    },
+    {
+      "issuer": "Wio / Liv",
+      "candidate_cards": [
+        "Wio Personal card"
+      ],
+      "reason": "digital-bank fee structures"
+    }
+  ]
+}

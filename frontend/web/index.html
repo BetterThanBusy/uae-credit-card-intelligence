@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UAE Credit Card Intelligence</title>
+<meta name="description" content="Find the cards that actually fit the way you spend. Every number traced back to an official issuer document.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B2027; --slate:#47616B; --mute:#7B8F98;
+  --paper:#FFFFFF; --ground:#EDF0F1; --line:#D9E0E3; --hair:#E9EDEF;
+  --verified:#1F7A5A; --partial:#B5761F; --unknown:#9A3B3B;
+  --shell:1120px;
+  --s1:.5rem; --s2:1rem; --s3:1.5rem; --s4:2.5rem; --s5:4rem;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font:400 16px/1.6 Inter,system-ui,sans-serif;
+  font-variant-numeric:tabular-nums lining-nums;
+}
+h1,h2,h3{font-family:Newsreader,Georgia,serif; font-weight:400; letter-spacing:-.01em; margin:0}
+p{margin:0}
+button{font:inherit; color:inherit; cursor:pointer}
+a{color:inherit}
+.shell{max-width:var(--shell); margin:0 auto; padding:0 var(--s3)}
+.num{font-family:Newsreader,Georgia,serif; font-variant-numeric:tabular-nums lining-nums}
+
+/* ---------- masthead ---------- */
+.masthead{background:var(--ink); color:#F4F7F8; padding:var(--s4) 0 var(--s5)}
+.brandline{display:flex; align-items:center; gap:.6rem; font-size:.8rem; color:#8FA8B2; margin-bottom:var(--s4)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--verified)}
+.masthead h1{font-size:clamp(2.1rem,5.5vw,3.6rem); line-height:1.08; max-width:15ch; color:#fff}
+.masthead .sub{margin-top:var(--s2); max-width:52ch; color:#B9CBD2; font-size:1.05rem}
+.facts{display:flex; flex-wrap:wrap; gap:var(--s4); margin-top:var(--s4); padding-top:var(--s3); border-top:1px solid rgba(255,255,255,.14)}
+.fact{min-width:120px}
+.fact b{display:block; font-family:Newsreader,serif; font-size:1.9rem; font-weight:400; color:#fff}
+.fact span{font-size:.82rem; color:#8FA8B2}
+
+/* ---------- panels ---------- */
+.stage{padding:var(--s5) 0}
+.panel{background:var(--paper); border:1px solid var(--line); border-radius:14px}
+.panel-head{padding:var(--s3); border-bottom:1px solid var(--hair)}
+.panel-head h2{font-size:1.45rem}
+.panel-head p{color:var(--slate); font-size:.92rem; margin-top:.35rem; max-width:62ch}
+.panel-body{padding:var(--s3)}
+
+/* ---------- form ---------- */
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:var(--s2)}
+.field label{display:block; font-size:.85rem; color:var(--slate); margin-bottom:.35rem}
+.money{position:relative}
+.money span{position:absolute; left:.85rem; top:50%; transform:translateY(-50%); color:var(--mute); font-size:.82rem; pointer-events:none}
+input,select{
+  width:100%; padding:.7rem .85rem .7rem 3.1rem; border:1px solid var(--line); border-radius:9px;
+  background:var(--paper); color:var(--ink); font:inherit; font-variant-numeric:tabular-nums;
+}
+select,.plain input{padding-left:.85rem}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+fieldset{border:0; margin:0 0 var(--s3); padding:0}
+legend{font-size:.9rem; font-weight:600; padding:0 0 .75rem}
+details.more{margin-top:var(--s2); border-top:1px solid var(--hair); padding-top:var(--s2)}
+details.more summary{font-size:.9rem; color:var(--slate); cursor:pointer; list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"+ "; color:var(--mute)}
+details.more[open] summary::before{content:"– "}
+details.more .grid{margin-top:var(--s2)}
+.actions{display:flex; flex-wrap:wrap; gap:var(--s2); align-items:center; margin-top:var(--s3); padding-top:var(--s3); border-top:1px solid var(--hair)}
+.go{background:var(--ink); color:#fff; border:0; border-radius:9px; padding:.85rem 1.5rem; font-weight:500}
+.go:disabled{opacity:.45; cursor:not-allowed}
+.ghost{background:none; border:1px solid var(--line); border-radius:9px; padding:.85rem 1.2rem; color:var(--slate)}
+.note{font-size:.85rem; color:var(--mute)}
+
+/* ---------- status chips ---------- */
+.chip{display:inline-flex; align-items:center; gap:.4rem; font-size:.74rem; padding:.22rem .55rem; border-radius:999px; border:1px solid currentColor; white-space:nowrap}
+.chip i{width:5px;height:5px;border-radius:50%;background:currentColor; font-style:normal}
+.q-HIGH,.s-VERIFIED{color:var(--verified)}
+.q-MEDIUM,.s-PARTIALLY_VERIFIED,.s-CONFLICTING{color:var(--partial)}
+.q-LOW,.s-UNKNOWN{color:var(--unknown)}
+
+/* ---------- result ---------- */
+.result-grid{display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:var(--s3); align-items:start}
+.rank{display:flex; align-items:baseline; gap:.6rem; font-size:.8rem; color:var(--mute)}
+.winner h3{font-size:1.9rem; margin:.3rem 0 .2rem}
+.issuer{color:var(--slate); font-size:.92rem}
+.headline{margin:var(--s3) 0; padding:var(--s3) 0; border-top:1px solid var(--hair); border-bottom:1px solid var(--hair)}
+.headline .v{font-size:clamp(2.6rem,7vw,4rem); line-height:1; display:block}
+.headline .k{font-size:.85rem; color:var(--slate); display:block; margin-top:.5rem}
+.ledger{width:100%; border-collapse:collapse; font-size:.9rem}
+.ledger th{text-align:left; font-weight:500; color:var(--slate); font-size:.78rem; padding:0 0 .6rem; border-bottom:1px solid var(--line)}
+.ledger td{padding:.6rem 0; border-bottom:1px solid var(--hair); vertical-align:top}
+.ledger td:last-child,.ledger th:last-child{text-align:right}
+.ledger .cap{display:block; font-size:.76rem; color:var(--partial); margin-top:.15rem}
+.ledger tr.sum td{font-weight:600; border-bottom:0; border-top:1px solid var(--line)}
+.ledger tr.neg td:last-child{color:var(--unknown)}
+.why{list-style:none; padding:0; margin:0; display:grid; gap:.7rem}
+.why li{padding-left:1.1rem; position:relative; font-size:.93rem; color:var(--slate)}
+.why li::before{content:""; position:absolute; left:0; top:.6em; width:5px; height:5px; border-radius:50%; background:var(--line)}
+
+/* ---------- rail ---------- */
+.rail{display:grid; gap:var(--s2); position:sticky; top:var(--s2)}
+.railcard{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:var(--s3)}
+.railcard h4{margin:0 0 .8rem; font:500 .95rem/1.4 Inter,sans-serif}
+.kv{display:flex; justify-content:space-between; gap:var(--s2); padding:.5rem 0; border-bottom:1px solid var(--hair); font-size:.88rem}
+.kv:last-child{border-bottom:0}
+.kv dt{color:var(--slate)}
+.kv dd{margin:0; text-align:right}
+.srcbtn{margin-top:var(--s2); width:100%; background:none; border:1px solid var(--line); border-radius:9px; padding:.6rem; font-size:.85rem; color:var(--ink)}
+.warn{border-left:3px solid var(--unknown); padding:.75rem .9rem; background:#FBF4F4; border-radius:0 8px 8px 0; font-size:.87rem; color:#6E2E2E}
+.warn + .warn{margin-top:.6rem}
+
+/* ---------- comparison ---------- */
+.alts{display:grid; gap:var(--s2)}
+.alt{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:var(--s2); align-items:center; padding:var(--s2) var(--s3); border:1px solid var(--line); border-radius:12px; background:var(--paper)}
+.alt .nm{font-weight:500}
+.alt .cats{font-size:.82rem; color:var(--slate); margin-top:.2rem}
+.alt .val{text-align:right}
+.alt .val b{font-family:Newsreader,serif; font-weight:400; font-size:1.5rem; display:block}
+.alt .val span{font-size:.76rem; color:var(--mute)}
+.bar{height:3px; background:var(--hair); border-radius:2px; margin-top:.5rem; overflow:hidden}
+.bar i{display:block; height:100%; background:var(--ink); width:0; transition:width .7s cubic-bezier(.2,.7,.3,1)}
+.excluded{border-style:dashed; background:transparent}
+.excluded .nm{color:var(--slate)}
+
+/* ---------- two card ---------- */
+.combo{display:grid; grid-template-columns:1fr auto 1fr; gap:var(--s2); align-items:center}
+.combo .card{border:1px solid var(--line); border-radius:12px; padding:var(--s2); background:var(--paper)}
+.combo .plus{color:var(--mute)}
+.alloc{display:flex; flex-wrap:wrap; gap:.4rem; margin-top:var(--s2)}
+.alloc span{font-size:.78rem; border:1px solid var(--line); border-radius:999px; padding:.2rem .6rem; color:var(--slate)}
+.verdict{margin-top:var(--s3); padding-top:var(--s3); border-top:1px solid var(--hair); color:var(--slate); font-size:.93rem}
+
+/* ---------- drawer ---------- */
+.scrim{position:fixed; inset:0; background:rgba(11,32,39,.45); opacity:0; pointer-events:none; transition:opacity .25s; z-index:40}
+.scrim.on{opacity:1; pointer-events:auto}
+.drawer{position:fixed; top:0; right:0; height:100dvh; width:min(560px,100%); background:var(--paper); z-index:50;
+  transform:translateX(100%); transition:transform .3s cubic-bezier(.2,.7,.3,1); display:flex; flex-direction:column}
+.drawer.on{transform:none}
+.drawer header{padding:var(--s3); border-bottom:1px solid var(--hair); display:flex; justify-content:space-between; gap:var(--s2); align-items:flex-start}
+.drawer header h3{font-size:1.2rem}
+.drawer .x{background:none;border:0;font-size:1.5rem;line-height:1;color:var(--mute); padding:0 .2rem}
+.drawer .body{overflow:auto; padding:var(--s3); display:grid; gap:var(--s2)}
+.ev{border:1px solid var(--line); border-radius:11px; padding:var(--s2)}
+.ev .top{display:flex; justify-content:space-between; gap:var(--s2); align-items:flex-start; margin-bottom:.5rem}
+.ev .fname{font-weight:500; font-size:.92rem}
+.ev .val{font-family:Newsreader,serif; font-size:1.1rem}
+.ev blockquote{margin:.6rem 0 0; padding-left:.8rem; border-left:2px solid var(--hair); color:var(--slate); font-size:.87rem}
+.ev .meta{margin-top:.6rem; font-size:.78rem; color:var(--mute); word-break:break-word}
+.ev .meta a{color:var(--slate)}
+
+/* ---------- states ---------- */
+.skel{border-radius:9px; background:linear-gradient(90deg,var(--hair) 25%,#F4F7F8 50%,var(--hair) 75%); background-size:400% 100%; animation:sh 1.3s infinite}
+@keyframes sh{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.loading{display:grid; gap:var(--s2)}
+.empty{text-align:left; color:var(--slate); padding:var(--s4) 0; max-width:56ch}
+.empty h2{font-size:1.35rem; margin-bottom:.5rem}
+.err{border-left:3px solid var(--unknown); background:#FBF4F4; padding:var(--s3); border-radius:0 10px 10px 0}
+.err h2{font-size:1.15rem; color:#6E2E2E; margin-bottom:.4rem}
+.err p{color:#6E2E2E; font-size:.92rem}
+.err code{background:rgba(0,0,0,.06); padding:.1rem .35rem; border-radius:4px; font-size:.85em}
+
+/* one orchestrated reveal, only when results arrive */
+.reveal>*{opacity:0; transform:translateY(10px); animation:rise .55s cubic-bezier(.2,.7,.3,1) forwards}
+.reveal>*:nth-child(2){animation-delay:.07s}
+.reveal>*:nth-child(3){animation-delay:.14s}
+.reveal>*:nth-child(4){animation-delay:.21s}
+.reveal>*:nth-child(5){animation-delay:.28s}
+@keyframes rise{to{opacity:1; transform:none}}
+
+footer{border-top:1px solid var(--line); padding:var(--s4) 0; color:var(--mute); font-size:.83rem}
+footer p{max-width:70ch; margin-bottom:.6rem}
+.stage h2.sec{font-size:1.5rem; margin-bottom:.4rem}
+.stage p.secsub{color:var(--slate); font-size:.92rem; margin-bottom:var(--s3); max-width:62ch}
+
+@media (max-width:900px){
+  .result-grid{grid-template-columns:1fr}
+  .rail{position:static}
+  .combo{grid-template-columns:1fr; }
+  .combo .plus{text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important}
+  .reveal>*{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="shell">
+    <div class="brandline"><i class="dot"></i> UAE Credit Card Intelligence</div>
+    <h1>Find the cards that actually fit the way you spend.</h1>
+    <p class="sub">Most comparisons rank cards in the abstract. This one runs your spending through each card's published rules — caps, minimum spends, exclusions — and shows every number's source.</p>
+    <div class="facts">
+      <div class="fact"><b id="f-cards">—</b><span>cards researched</span></div>
+      <div class="fact"><b id="f-rank">—</b><span>precisely rankable</span></div>
+      <div class="fact"><b>0</b><span>estimated values</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="stage">
+  <div class="shell">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Your monthly spending</h2>
+        <p>Rough monthly figures are fine. Leave anything at zero if it doesn't apply — the engine only rewards categories you actually spend in.</p>
+      </div>
+      <div class="panel-body">
+        <form id="form" novalidate>
+          <fieldset>
+            <legend>Where your money goes each month</legend>
+            <div class="grid">
+              <div class="field"><label for="groceries">Groceries</label><div class="money"><span>AED</span><input id="groceries" type="number" min="0" step="100" value="3000" inputmode="numeric"></div></div>
+              <div class="field"><label for="dining">Dining</label><div class="money"><span>AED</span><input id="dining" type="number" min="0" step="100" value="1500" inputmode="numeric"></div></div>
+              <div class="field"><label for="fuel">Fuel and Salik</label><div class="money"><span>AED</span><input id="fuel" type="number" min="0" step="100" value="800" inputmode="numeric"></div></div>
+              <div class="field"><label for="travel">Travel</label><div class="money"><span>AED</span><input id="travel" type="number" min="0" step="100" value="1000" inputmode="numeric"></div></div>
+              <div class="field"><label for="online">Online shopping</label><div class="money"><span>AED</span><input id="online" type="number" min="0" step="100" value="1200" inputmode="numeric"></div></div>
+              <div class="field"><label for="telecom">Telecom</label><div class="money"><span>AED</span><input id="telecom" type="number" min="0" step="50" value="400" inputmode="numeric"></div></div>
+              <div class="field"><label for="other">Everything else</label><div class="money"><span>AED</span><input id="other" type="number" min="0" step="100" value="1000" inputmode="numeric"></div></div>
+            </div>
+            <details class="more">
+              <summary>More categories</summary>
+              <div class="grid">
+                <div class="field"><label for="utilities">Utilities</label><div class="money"><span>AED</span><input id="utilities" type="number" min="0" step="100" value="0" inputmode="numeric"></div></div>
+                <div class="field"><label for="government">Government</label><div class="money"><span>AED</span><input id="government" type="number" min="0" step="100" value="0" inputmode="numeric"></div></div>
+                <div class="field"><label for="education">Education</label><div class="money"><span>AED</span><input id="education" type="number" min="0" step="100" value="0" inputmode="numeric"></div></div>
+                <div class="field"><label for="fashion">Fashion</label><div class="money"><span>AED</span><input id="fashion" type="number" min="0" step="100" value="0" inputmode="numeric"></div></div>
+                <div class="field"><label for="entertainment">Entertainment</label><div class="money"><span>AED</span><input id="entertainment" type="number" min="0" step="100" value="0" inputmode="numeric"></div></div>
+              </div>
+            </details>
+          </fieldset>
+
+          <fieldset>
+            <legend>Spending abroad and your situation</legend>
+            <div class="grid">
+              <div class="field"><label for="intl">Spent outside the UAE each month</label><div class="money"><span>AED</span><input id="intl" type="number" min="0" step="100" value="1000" inputmode="numeric"></div></div>
+              <div class="field"><label for="salary">Monthly salary</label><div class="money"><span>AED</span><input id="salary" type="number" min="0" step="1000" value="25000" inputmode="numeric"></div></div>
+              <div class="field plain"><label for="emirate">Emirate</label>
+                <select id="emirate">
+                  <option>Dubai</option><option>Abu Dhabi</option><option>Sharjah</option><option>Ajman</option>
+                  <option>Umm Al Quwain</option><option>Ras Al Khaimah</option><option>Fujairah</option>
+                </select>
+              </div>
+              <div class="field plain"><label for="current">Card you hold today <span class="note">(optional)</span></label>
+                <select id="current"><option value="">Not using one</option></select>
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="actions">
+            <button class="go" id="go" type="submit">Find my cards</button>
+            <button class="ghost" id="reset" type="button">Clear</button>
+            <span class="note" id="total"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="out" class="stage" aria-live="polite"></section>
+</main>
+
+<footer>
+  <div class="shell">
+    <p id="disclaimer">This is an estimate based on the card terms and spending assumptions available to the system. Card terms and eligibility can change. Verify current terms with the issuing bank before applying.</p>
+    <p class="note" id="runmeta"></p>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dtitle" hidden>
+  <header>
+    <div><h3 id="dtitle">Where these numbers come from</h3><p class="note" id="dsub"></p></div>
+    <button class="x" id="dclose" aria-label="Close">&times;</button>
+  </header>
+  <div class="body" id="dbody"></div>
+</aside>
+
+<script>
+"use strict";
+// The API is the only source of financial truth. Nothing in this file computes,
+// derives, adjusts or infers a monetary value — it renders what the deterministic
+// backend returns. Search this file for arithmetic on money: there is none.
+const API = (window.API_BASE_URL || "") + "/api/v1";
+
+const PRIMARY = ["groceries","dining","fuel","travel","online","telecom","other"];
+const EXTRA = ["utilities","government","education","fashion","entertainment"];
+const ALL = PRIMARY.concat(EXTRA);
+
+const $ = (s, r=document) => r.querySelector(s);
+const el = (t, c, txt) => { const n = document.createElement(t); if(c) n.className=c; if(txt!=null) n.textContent=txt; return n; };
+const num = v => Number(v||0);
+const aed = v => v==null ? "not quantified" : "AED " + Math.round(v).toLocaleString("en-AE");
+const pct = r => r==null ? "—" : (r*100).toFixed(2).replace(/\.?0+$/,"") + "%";
+const titled = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+const QUALITY_COPY = {
+  HIGH:  "Every field this calculation depends on is verified from an official issuer document.",
+  MEDIUM:"The core calculation is verified, but some fields rely on sources that are not official issuer documents.",
+  LOW:   "At least one field this calculation depends on could not be verified. Treat the figures as indicative."
+};
+
+/* ---------------- boot ---------------- */
+let CARDS = [];
+init();
+
+async function init(){
+  wireForm();
+  try{
+    const [health, cards] = await Promise.all([
+      fetch(API+"/health").then(r=>r.json()),
+      fetch(API+"/cards").then(r=>r.json())
+    ]);
+    CARDS = cards;
+    $("#f-cards").textContent = health.cards_loaded;
+    $("#f-rank").textContent = cards.filter(c=>!c.modelling_limitation).length;
+    const sel = $("#current");
+    cards.forEach(c=>{ const o=el("option",null,c.card_name); o.value=c.card_id; sel.appendChild(o); });
+    showEmpty();
+  }catch(e){
+    showError("Can't reach the recommendation service.",
+      "The page loaded but the API didn't answer. If you're running this locally, start it with <code>uvicorn app.main:app --reload</code> and make sure the database has been seeded.");
+  }
+}
+
+function wireForm(){
+  $("#form").addEventListener("submit", ev => { ev.preventDefault(); run(); });
+  $("#reset").addEventListener("click", () => {
+    ALL.forEach(c => $("#"+c).value = 0);
+    $("#intl").value = 0; updateTotal(); showEmpty();
+  });
+  document.querySelectorAll("input[type=number]").forEach(i => i.addEventListener("input", updateTotal));
+  $("#scrim").addEventListener("click", closeDrawer);
+  $("#dclose").addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", e => { if(e.key==="Escape") closeDrawer(); });
+  updateTotal();
+}
+
+function updateTotal(){
+  // Display-only sum of the user's own inputs. Not a financial result.
+  let t = 0; ALL.forEach(c => t += num($("#"+c).value)); t += num($("#intl").value);
+  $("#total").textContent = t>0 ? "Monthly total " + aed(t) : "";
+  $("#go").disabled = t<=0;
+}
+
+function buildProfile(){
+  const spend = {};
+  ALL.forEach(c => { const v = num($("#"+c).value); if(v>0) spend[c]=v; });
+  const body = {
+    emirate: $("#emirate").value,
+    monthly_category_spend: spend,
+    international_monthly_spend: num($("#intl").value),
+    salary_monthly: num($("#salary").value),
+    reward_preference: "cashback",
+    annual_fee_tolerance: 500,
+    pays_balance_in_full: true
+  };
+  const cur = $("#current").value; if(cur) body.current_card_id = cur;
+  return body;
+}
+
+/* ---------------- run ---------------- */
+async function run(){
+  showLoading();
+  let res;
+  try{
+    res = await fetch(API+"/recommend", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(buildProfile())
+    });
+  }catch(e){
+    return showError("The recommendation service didn't respond.",
+      "Check that the API is running and reachable from this page.");
+  }
+  if(res.status === 422){
+    return showError("Those numbers didn't pass validation.",
+      "The engine rejects negative or implausible amounts. Check the spending fields and try again.");
+  }
+  if(res.status === 503){
+    return showError("No card data is loaded.",
+      "The API is up but its database is empty. Run <code>python scripts/seed_database.py</code> and reload.");
+  }
+  if(!res.ok){
+    return showError("The request failed.", "The service returned status " + res.status + ".");
+  }
+  render(await res.json());
+}
+
+/* ---------------- render ---------------- */
+function render(d){
+  const out = $("#out"); out.innerHTML = "";
+  const shell = el("div","shell"); out.appendChild(shell);
+  const wrap = el("div","reveal"); shell.appendChild(wrap);
+
+  $("#disclaimer").textContent = d.disclaimer;
+  $("#runmeta").textContent = `Run ${d.run_id} · calculation ${d.calculation_version} · card data ${d.card_data_version}`;
+
+  if(!d.top_cards.length){
+    wrap.appendChild(noRankable(d));
+  }else{
+    wrap.appendChild(winnerBlock(d));
+    if(d.top_cards.length>1 || d.conditional_cards.length) wrap.appendChild(comparisonBlock(d));
+    if(d.best_strategy) wrap.appendChild(strategyBlock(d));
+  }
+  wrap.appendChild(qualityBlock(d));
+  out.scrollIntoView({behavior: prefersReduced()?"auto":"smooth", block:"start"});
+}
+
+function winnerBlock(d){
+  const c = d.top_cards[0];
+  const sec = el("section");
+  const grid = el("div","result-grid");
+
+  /* --- main column --- */
+  const main = el("div","panel");
+  const head = el("div","panel-head winner");
+  const rank = el("div","rank"); rank.append(el("span",null,"Best fit for your spending"));
+  head.append(rank, el("h3",null,c.card_name), el("p","issuer",c.issuer));
+
+  const hl = el("div","headline");
+  const v = el("span","v num", aed(c.net_annual_value)); const k = el("span","k","Estimated net value per year, after fees");
+  hl.append(v,k); head.appendChild(hl);
+
+  if(d.current_card_comparison){
+    const cc = d.current_card_comparison;
+    const p = el("p","note");
+    p.textContent = `Your ${cc.current_card_name} is estimated at ${aed(cc.current_estimated_value)} a year. Switching is worth an estimated ${aed(cc.potential_additional_value)} more.`;
+    head.appendChild(p);
+  }
+  main.appendChild(head);
+
+  const body = el("div","panel-body");
+
+  /* ledger: rendered straight from backend breakdown */
+  const t = el("table","ledger");
+  t.innerHTML = "<thead><tr><th>Category</th><th>You spend</th><th>Rate</th><th>Earns</th></tr></thead>";
+  const tb = el("tbody");
+  c.category_breakdown.forEach(r=>{
+    const tr = el("tr");
+    const nameCell = el("td"); nameCell.append(document.createTextNode(titled(r.category)));
+    if(r.cap_applied) nameCell.appendChild(el("span","cap", r.cap_applied));
+    else if(r.note) nameCell.appendChild(el("span","cap", r.note));
+    tr.append(nameCell,
+      el("td", "num", aed(r.monthly_spend) + " /mo"),
+      el("td", null, pct(r.rate_applied)),
+      el("td", "num", aed(r.monthly_reward_after_category_cap) + " /mo"));
+    tb.appendChild(tr);
+  });
+  const gross = el("tr","sum");
+  gross.append(el("td",null,"Rewards earned"), el("td"), el("td"), el("td","num", aed(c.gross_annual_rewards)));
+  tb.appendChild(gross);
+
+  const fee = el("tr", c.annual_fee>0 ? "neg":"");
+  fee.append(el("td",null,"Annual fee"), el("td"), el("td"), el("td","num", c.annual_fee>0 ? "−"+aed(c.annual_fee) : aed(0)));
+  tb.appendChild(fee);
+
+  const fxUnknown = c.unknown_fields.includes("fx_fee");
+  const fx = el("tr", (!fxUnknown && c.fx_cost>0) ? "neg":"");
+  const fxName = el("td"); fxName.append(document.createTextNode("Foreign exchange cost"));
+  if(fxUnknown) fxName.appendChild(el("span","cap","fee not published — excluded from this total"));
+  fx.append(fxName, el("td"), el("td"), el("td","num", fxUnknown ? "not quantified" : (c.fx_cost>0 ? "−"+aed(c.fx_cost) : aed(0))));
+  tb.appendChild(fx);
+
+  const net = el("tr","sum");
+  net.append(el("td",null,"Net value per year"), el("td"), el("td"), el("td","num", aed(c.net_annual_value)));
+  tb.appendChild(net);
+  t.appendChild(tb); body.appendChild(t);
+
+  if(d.insights.length){
+    const h = el("p","secsub"); h.style.marginTop="1.5rem"; h.textContent="Why this card, for your numbers";
+    body.appendChild(h);
+    const ul = el("ul","why");
+    d.insights.slice(0,5).forEach(i=>ul.appendChild(el("li",null,i)));
+    body.appendChild(ul);
+  }
+  main.appendChild(body);
+  grid.appendChild(main);
+
+  /* --- rail --- */
+  const rail = el("div","rail");
+
+  const facts = el("div","railcard");
+  facts.appendChild(el("h4",null,"At a glance"));
+  const dl = el("dl");
+  const row = (k2,v2,cls)=>{ const r=el("div","kv"); r.append(el("dt",null,k2)); const dd=el("dd",cls,v2); r.appendChild(dd); dl.appendChild(r); return dd; };
+  row("Rewards", aed(c.gross_annual_rewards));
+  row("Annual fee", c.annual_fee>0 ? aed(c.annual_fee) : "None");
+  row("FX cost", fxUnknown ? "Not published" : aed(c.fx_cost));
+  row("Eligibility", titled(c.eligibility.replace(/_/g," ")));
+  const dq = row("Data quality","");
+  dq.appendChild(chip(c.data_quality,"q-"));
+  facts.appendChild(dl);
+
+  const btn = el("button","srcbtn","View the source for every number");
+  btn.addEventListener("click",()=>openDrawer(c.card_id, c.card_name));
+  facts.appendChild(btn);
+  rail.appendChild(facts);
+
+  if(c.unknown_fields.length){
+    const box = el("div","railcard");
+    box.appendChild(el("h4",null,"Excluded from the calculation"));
+    c.unknown_fields.forEach(f=>{
+      const w = el("div","warn");
+      w.textContent = unknownCopy(f);
+      box.appendChild(w);
+    });
+    rail.appendChild(box);
+  }
+
+  if(c.benefits.length){
+    const box = el("div","railcard");
+    box.appendChild(el("h4",null,"Perks, deliberately not priced"));
+    const p = el("p","note"); p.style.marginBottom=".7rem";
+    p.textContent = "These carry real value but no defensible AED figure, so they stay out of the total.";
+    box.appendChild(p);
+    const dl2 = el("dl");
+    c.benefits.forEach(b=>{ const r=el("div","kv"); r.append(el("dt",null,b)); dl2.appendChild(r); });
+    box.appendChild(dl2); rail.appendChild(box);
+  }
+
+  grid.appendChild(rail);
+  sec.appendChild(grid);
+  return sec;
+}
+
+function unknownCopy(f){
+  if(f==="fx_fee") return "The foreign transaction fee isn't published for this card, so no FX cost was deducted. Your real net value will be lower by whatever that fee turns out to be.";
+  if(f==="annual_fee") return "The annual fee couldn't be verified, so this card isn't given a precise ranking position.";
+  if(f.startsWith("reward_rule:")) return `The reward rule for ${f.split(":")[1]} isn't published in a form we can verify, so that category earns nothing in this calculation.`;
+  return `${f.replace(/_/g," ")} could not be verified and was left out of the calculation.`;
+}
+
+function comparisonBlock(d){
+  const sec = el("section"); sec.style.marginTop = "2.5rem";
+  sec.appendChild(el("h2","sec","How the alternatives compare"));
+  sec.appendChild(el("p","secsub","Same spending profile, run through each card's own rules. Bars are relative to the best result."));
+  const list = el("div","alts");
+  const top = d.top_cards[0].net_annual_value || 1;
+
+  d.top_cards.forEach((c,i)=>{
+    const a = el("div","alt");
+    const left = el("div");
+    left.append(el("div","nm",(i===0?"1. ":`${i+1}. `)+c.card_name));
+    const earners = c.category_breakdown.filter(r=>r.monthly_reward_after_category_cap>0)
+      .sort((x,y)=> x.monthly_reward_after_category_cap < y.monthly_reward_after_category_cap ? 1 : -1)
+      .slice(0,3).map(r=>`${titled(r.category)} ${pct(r.rate_applied)}`);
+    left.append(el("div","cats", earners.length?earners.join(" · "):"Earns nothing on this profile"));
+    const bar = el("div","bar"); const fill = el("i"); bar.appendChild(fill); left.appendChild(bar);
+    requestAnimationFrame(()=>{ fill.style.width = Math.max(2,(c.net_annual_value/top)*100)+"%"; });
+
+    const right = el("div","val");
+    right.append(el("b","num", aed(c.net_annual_value)), el("span",null,"net per year"));
+    right.appendChild(chip(c.data_quality,"q-"));
+    a.append(left,right); list.appendChild(a);
+  });
+
+  d.conditional_cards.forEach(c=>{
+    const a = el("div","alt excluded");
+    const left = el("div");
+    left.append(el("div","nm",c.card_name));
+    left.append(el("div","cats", c.exclusion_reason || "Not ranked."));
+    const right = el("div","val");
+    right.append(el("b","num","—"), el("span",null,"not ranked"));
+    a.append(left,right); list.appendChild(a);
+  });
+
+  sec.appendChild(list);
+  return sec;
+}
+
+function strategyBlock(d){
+  const s = d.best_strategy;
+  const sec = el("section"); sec.style.marginTop="2.5rem";
+  sec.appendChild(el("h2","sec","Would two cards do better?"));
+  sec.appendChild(el("p","secsub","Each category is put on whichever card pays more, then the split is re-scored so minimum spends and caps apply to the smaller amount each card actually sees."));
+
+  const panel = el("div","panel"); const body = el("div","panel-body");
+  const combo = el("div","combo");
+  const a = el("div","card"); a.append(el("div","nm",s.primary_card_name), el("div","note","Primary"));
+  const plus = el("div","plus","+");
+  const b = el("div","card"); b.append(el("div","nm",s.secondary_card_name), el("div","note","Secondary"));
+  combo.append(a,plus,b); body.appendChild(combo);
+
+  const alloc = el("div","alloc");
+  Object.entries(s.category_allocation).forEach(([cat,card])=>{
+    alloc.appendChild(el("span",null,`${titled(cat)} → ${card}`));
+  });
+  body.appendChild(alloc);
+
+  const dl = el("dl"); dl.style.marginTop="1.5rem";
+  const r1=el("div","kv"); r1.append(el("dt",null,"Two cards together"), el("dd","num",aed(s.combined_net_annual_value))); dl.appendChild(r1);
+  const r2=el("div","kv"); r2.append(el("dt",null,"Best single card"), el("dd","num",aed(s.best_single_net_annual_value))); dl.appendChild(r2);
+  const r3=el("div","kv"); r3.append(el("dt",null,"Difference"), el("dd","num",aed(s.incremental_value))); dl.appendChild(r3);
+  body.appendChild(dl);
+
+  const verdict = el("p","verdict", s.reason);
+  body.appendChild(verdict);
+  panel.appendChild(body); sec.appendChild(panel);
+  return sec;
+}
+
+function qualityBlock(d){
+  const sec = el("section"); sec.style.marginTop="2.5rem";
+  const panel = el("div","panel");
+  const head = el("div","panel-head");
+  const h = el("h2",null,"How much to trust these numbers");
+  head.appendChild(h);
+  const chipwrap = el("p"); chipwrap.style.marginTop=".6rem"; chipwrap.appendChild(chip(d.data_quality,"q-"));
+  head.appendChild(chipwrap);
+  head.appendChild(el("p",null,QUALITY_COPY[d.data_quality]));
+  panel.appendChild(head);
+
+  const body = el("div","panel-body");
+  if(d.top_cards.length && d.top_cards[0].data_quality_reasons.length){
+    const ul = el("ul","why");
+    d.top_cards[0].data_quality_reasons.forEach(r=>ul.appendChild(el("li",null,r)));
+    body.appendChild(ul);
+  }
+  if(d.assumptions.length){
+    const p = el("p","secsub"); p.style.margin="1.5rem 0 .6rem"; p.textContent="Assumptions behind the maths";
+    body.appendChild(p);
+    const ul2 = el("ul","why");
+    d.assumptions.forEach(a=>ul2.appendChild(el("li",null,a)));
+    body.appendChild(ul2);
+  }
+  panel.appendChild(body); sec.appendChild(panel);
+  return sec;
+}
+
+function noRankable(d){
+  const sec = el("section");
+  const panel = el("div","panel");
+  const head = el("div","panel-head");
+  head.append(el("h2",null,"No card can be ranked honestly for this profile"));
+  head.append(el("p",null,"Every candidate has at least one field the calculation depends on that isn't published in a verifiable form. Rather than show you a number built on a guess, here's what's missing."));
+  panel.appendChild(head);
+  const body = el("div","panel-body");
+  const list = el("div","alts");
+  d.conditional_cards.forEach(c=>{
+    const a = el("div","alt excluded");
+    const left = el("div");
+    left.append(el("div","nm",c.card_name), el("div","cats",c.exclusion_reason||""));
+    a.append(left, el("div","val"));
+    list.appendChild(a);
+  });
+  body.appendChild(list); panel.appendChild(body); sec.appendChild(panel);
+  return sec;
+}
+
+function chip(status, prefix){
+  const c = el("span","chip "+prefix+status);
+  c.appendChild(el("i")); c.append(document.createTextNode(status.replace(/_/g," ").toLowerCase()));
+  return c;
+}
+
+/* ---------------- evidence drawer ---------------- */
+async function openDrawer(cardId, cardName){
+  const dr = $("#drawer"); dr.hidden = false;
+  requestAnimationFrame(()=>{ dr.classList.add("on"); $("#scrim").classList.add("on"); });
+  $("#dsub").textContent = cardName;
+  const body = $("#dbody");
+  body.innerHTML = "";
+  for(let i=0;i<3;i++){ const s=el("div","skel"); s.style.height="90px"; body.appendChild(s); }
+  $("#dclose").focus();
+
+  let data;
+  try{ data = await fetch(API+"/cards/"+encodeURIComponent(cardId)).then(r=>r.json()); }
+  catch(e){
+    body.innerHTML = "";
+    const err = el("div","err"); err.append(el("h2",null,"Couldn't load the sources"), el("p",null,"The card detail request failed. Close this and try again."));
+    body.appendChild(err); return;
+  }
+  body.innerHTML = "";
+  const intro = el("p","note");
+  intro.textContent = "Each figure below was read from the document linked beside it. Nothing here is inferred.";
+  body.appendChild(intro);
+
+  (data.sources||[]).forEach(s=>{
+    const card = el("div","ev");
+    const top = el("div","top");
+    top.append(el("div","fname", s.field_name.replace(/_/g," ")));
+    top.appendChild(chip(s.verification_status,"s-"));
+    card.appendChild(top);
+    card.appendChild(el("div","val", s.value==="UNKNOWN" ? "Not published" : (s.value + (s.unit?" "+s.unit:""))));
+    if(s.evidence) card.appendChild(el("blockquote",null,s.evidence));
+    const meta = el("div","meta");
+    const a = el("a",null,s.source_name); a.href = s.source_url; a.target="_blank"; a.rel="noopener noreferrer";
+    meta.append(a);
+    meta.append(document.createTextNode(` · tier ${s.source_tier} · retrieved ${String(s.retrieved_at||"").slice(0,10)}`));
+    card.appendChild(meta);
+    body.appendChild(card);
+  });
+
+  if(data.card && data.card.modelling_limitation){
+    const w = el("div","warn"); w.textContent = data.card.modelling_limitation; body.appendChild(w);
+  }
+}
+function closeDrawer(){
+  const dr=$("#drawer");
+  dr.classList.remove("on"); $("#scrim").classList.remove("on");
+  setTimeout(()=>{ dr.hidden = true; }, prefersReduced()?0:300);
+}
+
+/* ---------------- states ---------------- */
+function showEmpty(){
+  $("#out").innerHTML = "";
+  const shell = el("div","shell"); const e = el("div","empty");
+  e.append(el("h2",null,"Nothing calculated yet"));
+  e.append(el("p",null,"Enter what you spend in a typical month and the engine will run it through every card's published rules. It takes about a second."));
+  shell.appendChild(e); $("#out").appendChild(shell);
+}
+function showLoading(){
+  const out=$("#out"); out.innerHTML="";
+  const shell=el("div","shell"); const l=el("div","loading");
+  const p=el("p","note"); p.textContent="Running your spending through each card's rules…"; l.appendChild(p);
+  [180,120,120].forEach(h=>{ const s=el("div","skel"); s.style.height=h+"px"; l.appendChild(s); });
+  shell.appendChild(l); out.appendChild(shell);
+}
+function showError(title, html){
+  const out=$("#out"); out.innerHTML="";
+  const shell=el("div","shell"); const e=el("div","err");
+  e.appendChild(el("h2",null,title));
+  const p=el("p"); p.innerHTML=html; e.appendChild(p);
+  shell.appendChild(e); out.appendChild(shell);
+}
+function prefersReduced(){ return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+</script>
+</body>
+</html>
