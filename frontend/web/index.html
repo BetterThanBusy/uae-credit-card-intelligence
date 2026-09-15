@@ -77,9 +77,9 @@ details.more .grid{margin-top:var(--s2)}
 /* ---------- status chips ---------- */
 .chip{display:inline-flex; align-items:center; gap:.4rem; font-size:.74rem; padding:.22rem .55rem; border-radius:999px; border:1px solid currentColor; white-space:nowrap}
 .chip i{width:5px;height:5px;border-radius:50%;background:currentColor; font-style:normal}
-.q-HIGH,.s-VERIFIED{color:var(--verified)}
-.q-MEDIUM,.s-PARTIALLY_VERIFIED,.s-CONFLICTING{color:var(--partial)}
-.q-LOW,.s-UNKNOWN{color:var(--unknown)}
+.s-VERIFIED{color:var(--verified)}
+.s-PARTIALLY_VERIFIED,.s-CONFLICTING{color:var(--partial)}
+.s-UNKNOWN{color:var(--unknown)}
 
 /* ---------- result ---------- */
 .result-grid{display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:var(--s3); align-items:start}
@@ -109,7 +109,7 @@ details.more .grid{margin-top:var(--s2)}
 .kv dt{color:var(--slate)}
 .kv dd{margin:0; text-align:right}
 .srcbtn{margin-top:var(--s2); width:100%; background:none; border:1px solid var(--line); border-radius:9px; padding:.6rem; font-size:.85rem; color:var(--ink)}
-.warn{border-left:3px solid var(--unknown); padding:.75rem .9rem; background:#FBF4F4; border-radius:0 8px 8px 0; font-size:.87rem; color:#6E2E2E}
+.warn{border-left:3px solid var(--line); padding:.75rem .9rem; background:#F6F8F9; border-radius:0 8px 8px 0; font-size:.87rem; color:var(--slate)}
 .warn + .warn{margin-top:.6rem}
 
 /* ---------- comparison ---------- */
@@ -300,12 +300,6 @@ const aed = v => v==null ? "not quantified" : "AED " + Math.round(v).toLocaleStr
 const pct = r => r==null ? "—" : (r*100).toFixed(2).replace(/\.?0+$/,"") + "%";
 const titled = s => s.charAt(0).toUpperCase() + s.slice(1);
 
-const QUALITY_COPY = {
-  HIGH:  "Every field this calculation depends on is verified from an official issuer document.",
-  MEDIUM:"The core calculation is verified, but some fields rely on sources that are not official issuer documents.",
-  LOW:   "At least one field this calculation depends on could not be verified. Treat the figures as indicative."
-};
-
 /* ---------------- boot ---------------- */
 let CARDS = [];
 init();
@@ -408,7 +402,7 @@ function render(d){
     if(d.top_cards.length>1 || d.conditional_cards.length) wrap.appendChild(comparisonBlock(d));
     if(d.best_strategy) wrap.appendChild(strategyBlock(d));
   }
-  wrap.appendChild(qualityBlock(d));
+  wrap.appendChild(methodBlock(d));
   out.scrollIntoView({behavior: prefersReduced()?"auto":"smooth", block:"start"});
 }
 
@@ -443,7 +437,8 @@ function winnerBlock(d){
   const tb = el("tbody");
   c.category_breakdown.forEach(r=>{
     const tr = el("tr");
-    const nameCell = el("td"); nameCell.append(document.createTextNode(titled(r.category)));
+    const label = r.scope === "INTERNATIONAL" ? "Outside the UAE" : titled(r.category);
+    const nameCell = el("td"); nameCell.append(document.createTextNode(label));
     if(r.cap_applied) nameCell.appendChild(el("span","cap", r.cap_applied));
     else if(r.note) nameCell.appendChild(el("span","cap", r.note));
     tr.append(nameCell,
@@ -493,8 +488,6 @@ function winnerBlock(d){
   row("Annual fee", c.annual_fee>0 ? aed(c.annual_fee) : "None");
   row("FX cost", fxUnknown ? "Not published" : aed(c.fx_cost));
   row("Eligibility", titled(c.eligibility.replace(/_/g," ")));
-  const dq = row("Data quality","");
-  dq.appendChild(chip(c.data_quality,"q-"));
   facts.appendChild(dl);
 
   const btn = el("button","srcbtn","View the source for every number");
@@ -504,7 +497,7 @@ function winnerBlock(d){
 
   if(c.unknown_fields.length){
     const box = el("div","railcard");
-    box.appendChild(el("h4",null,"Excluded from the calculation"));
+    box.appendChild(el("h4",null,"Not included in this total"));
     c.unknown_fields.forEach(f=>{
       const w = el("div","warn");
       w.textContent = unknownCopy(f);
@@ -556,7 +549,6 @@ function comparisonBlock(d){
 
     const right = el("div","val");
     right.append(el("b","num", aed(c.net_annual_value)), el("span",null,"net per year"));
-    right.appendChild(chip(c.data_quality,"q-"));
     a.append(left,right); list.appendChild(a);
   });
 
@@ -605,30 +597,33 @@ function strategyBlock(d){
   return sec;
 }
 
-function qualityBlock(d){
+function methodBlock(d){
   const sec = el("section"); sec.style.marginTop="2.5rem";
   const panel = el("div","panel");
   const head = el("div","panel-head");
-  const h = el("h2",null,"How much to trust these numbers");
-  head.appendChild(h);
-  const chipwrap = el("p"); chipwrap.style.marginTop=".6rem"; chipwrap.appendChild(chip(d.data_quality,"q-"));
-  head.appendChild(chipwrap);
-  head.appendChild(el("p",null,QUALITY_COPY[d.data_quality]));
+  head.appendChild(el("h2",null,"What's behind these numbers"));
+  head.appendChild(el("p",null,"Every figure above is calculated from the card issuer's own published terms, not from estimates. Here is what the calculation assumed and what it left out."));
   panel.appendChild(head);
 
   const body = el("div","panel-body");
-  if(d.top_cards.length && d.top_cards[0].data_quality_reasons.length){
+
+  if(d.assumptions.length){
+    const p = el("p","secsub"); p.style.margin="0 0 .6rem"; p.textContent="Assumptions";
+    body.appendChild(p);
     const ul = el("ul","why");
-    d.top_cards[0].data_quality_reasons.forEach(r=>ul.appendChild(el("li",null,r)));
+    d.assumptions.forEach(a=>ul.appendChild(el("li",null,a)));
     body.appendChild(ul);
   }
-  if(d.assumptions.length){
-    const p = el("p","secsub"); p.style.margin="1.5rem 0 .6rem"; p.textContent="Assumptions behind the maths";
+
+  const excluded = d.top_cards.length ? d.top_cards[0].unknown_fields : [];
+  if(excluded.length){
+    const p = el("p","secsub"); p.style.margin="1.5rem 0 .6rem"; p.textContent="Left out of the calculation";
     body.appendChild(p);
-    const ul2 = el("ul","why");
-    d.assumptions.forEach(a=>ul2.appendChild(el("li",null,a)));
-    body.appendChild(ul2);
+    const ul = el("ul","why");
+    excluded.forEach(f=>ul.appendChild(el("li",null,unknownCopy(f))));
+    body.appendChild(ul);
   }
+
   panel.appendChild(body); sec.appendChild(panel);
   return sec;
 }

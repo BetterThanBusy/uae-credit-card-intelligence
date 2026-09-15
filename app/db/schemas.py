@@ -82,6 +82,7 @@ class UserProfile(BaseModel):
 
 class CategoryBreakdown(BaseModel):
     category: SpendCategory
+    scope: str | None = None  # INTERNATIONAL rows share the OTHER category
     monthly_spend: float
     rate_applied: float | None
     rate_source_status: str

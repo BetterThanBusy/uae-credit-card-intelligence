@@ -22,6 +22,7 @@ from datetime import date
 
 from app.domain.research_enums import (
     DOCUMENT_AUTHORITY,
+    ISSUER_LEVEL_DOCUMENTS,
     RESEARCH_CRITICAL_FIELDS,
     UNBOUNDED_QUALIFIERS,
     DocumentType,
@@ -176,10 +177,135 @@ def has_unbounded_qualifier(evidence: str, value: str) -> bool:
     return False
 
 
+# Words too generic to identify a card on their own. "Mashreq Cashback Credit
+# Card" must not reduce to "cashback", which would match every card page on the
+# site and reopen exactly the hole this gate closes.
+GENERIC_NAME_TOKENS = frozenset(
+    {
+        "cashback", "cash", "rewards", "reward", "credit", "card", "cards",
+        "platinum", "titanium", "gold", "silver", "classic", "signature",
+        "infinite", "world", "elite", "premium", "plus", "visa", "mastercard",
+    }
+)
+
+
+def card_name_variants(card_name: str) -> list[str]:
+    """Forms of a card name that might appear in a document.
+
+    "HSBC Live+ Credit Card" should match "Live+", "Live Plus" or the full name,
+    including on the issuer's own pages, which usually omit their own brand.
+    Variants that collapse to generic words are dropped.
+    """
+    base = card_name.lower()
+    raw = {base}
+
+    stripped = base
+    for filler in (" credit card", " card", " credit"):
+        stripped = stripped.replace(filler, " ")
+    stripped = " ".join(stripped.split())
+    if stripped:
+        raw.add(stripped)
+        # The issuer's own site rarely repeats its brand, so try without it.
+        tokens = stripped.split()
+        if len(tokens) > 1:
+            raw.add(" ".join(tokens[1:]))
+
+    variants = set()
+    for item in raw:
+        for form in (item, item.replace("+", " plus"), item.replace("+", "plus")):
+            form = " ".join(form.split())
+            if len(form) < 3:
+                continue
+            words = {w for w in form.replace("+", " ").split() if w}
+            if words and words <= GENERIC_NAME_TOKENS:
+                continue  # nothing distinctive left
+            variants.add(normalise(form))
+    return sorted(variants)
+
+
+GENERIC_CARD_MARKERS = ("credit card", "cashback", "annual membership fee", "cardholder")
+
+
+# A site-wide navigation menu names every product once, in one place. A real
+# product page names its card in several distinct places. Two clustered mention
+# sites is the smallest threshold that separates the two.
+MIN_BODY_MENTIONS = 2
+# How far the supporting sentence may sit from a card mention, in characters.
+EVIDENCE_PROXIMITY = 1500
+
+
+def _url_names_card(source_url: str | None, card_name: str) -> bool:
+    if not source_url:
+        return False
+    from urllib.parse import urlparse
+
+    path = normalise(urlparse(source_url).path.replace("-", " ").replace("_", " "))
+    return any(v in path for v in card_name_variants(card_name))
+
+
+def _mention_positions(text: str, card_name: str) -> list[int]:
+    """Distinct places the card is named.
+
+    Variants overlap - "live+", "hsbc live+" and "hsbc live+ credit card" all
+    hit the same words - so raw matches are clustered. Without this, one
+    navigation link counts as three mentions and a menu looks like a product
+    page.
+    """
+    raw: list[int] = []
+    for variant in card_name_variants(card_name):
+        start = text.find(variant)
+        while start != -1:
+            raw.append(start)
+            start = text.find(variant, start + 1)
+
+    clustered: list[int] = []
+    for position in sorted(raw):
+        if not clustered or position - clustered[-1] > 60:
+            clustered.append(position)
+    return clustered
+
+
+def document_scope(
+    document_text: str,
+    card_name: str,
+    document_type: str,
+    source_url: str | None = None,
+    evidence_text: str | None = None,
+) -> str:
+    """Is this document about the card, about the issuer's cards, or neither?
+
+    Returns CARD, ISSUER or NONE. This is the check that stops a current-account
+    page's fees being attributed to a credit card. Document-level matching alone
+    is not enough: bank sites put a link to every product in the navigation of
+    every page, so the card's name appears on pages that have nothing to do with
+    it. Two stronger signals are used instead - the URL naming the card, and the
+    supporting sentence sitting close to a card mention in the body.
+    """
+    text = normalise(document_text)
+
+    if _url_names_card(source_url, card_name):
+        return "CARD"
+
+    positions = _mention_positions(text, card_name)
+
+    if positions and evidence_text:
+        where = text.find(normalise(evidence_text))
+        if where != -1 and min(abs(where - p) for p in positions) <= EVIDENCE_PROXIMITY:
+            return "CARD"
+    elif len(positions) >= MIN_BODY_MENTIONS:
+        # No specific sentence to locate: fall back to how often the card is named.
+        return "CARD"
+
+    if document_type in ISSUER_LEVEL_DOCUMENTS and any(m in text for m in GENERIC_CARD_MARKERS):
+        return "ISSUER"
+    return "NONE"
+
+
 def verify_candidate(
     candidate: ExtractionCandidate,
     document_text: str,
     issuer: str,
+    card_name: str | None = None,
 ) -> VerificationOutcome:
     """The single gate every financial value must pass."""
     if not candidate.value or str(candidate.value).strip().upper() == "UNKNOWN":
@@ -242,8 +368,43 @@ def verify_candidate(
             detail=why,
         )
 
+    # 5. the document must actually be about this card
+    scope = "CARD"
+    if card_name:
+        scope = document_scope(
+            document_text,
+            card_name,
+            candidate.document_type,
+            source_url=candidate.source_url,
+            evidence_text=candidate.evidence_text,
+        )
+        if scope == "NONE":
+            return VerificationOutcome(
+                candidate,
+                ResearchVerification.UNKNOWN,
+                RejectionReason.DOCUMENT_NOT_ABOUT_CARD,
+                detail=(
+                    f"The quote is real and the domain is official, but this document does "
+                    f"not mention {card_name} and is not a card-wide terms document. "
+                    "Attributing its figures to this card would be a fabrication."
+                ),
+            )
+
     official = is_official_source(candidate.source_url, issuer)
     tier = DOCUMENT_AUTHORITY.get(candidate.document_type, 8) if official else 5
+
+    if official and scope == "ISSUER":
+        return VerificationOutcome(
+            candidate,
+            ResearchVerification.PARTIALLY_VERIFIED,
+            is_official=True,
+            source_tier=tier,
+            detail=(
+                "Found in an official issuer-wide document that does not name this card. "
+                "Applies to the card portfolio; not confirmed for this specific product."
+            ),
+            normalised_value=_as_float(candidate.value),
+        )
 
     if not official:
         return VerificationOutcome(

@@ -149,3 +149,65 @@ def test_integration_live_firecrawl_search():
     results = client.search('"ADCB 365 Cashback Credit Card" site:adcb.com', limit=3)
     assert results
     assert any(r.domain.endswith("adcb.com") for r in results)
+
+
+# --- error reporting and payload negotiation -----------------------------
+def test_error_body_is_surfaced_not_swallowed(tmp_path):
+    """A 400 must carry the API's own explanation, or debugging is guesswork."""
+    from app.services.research.firecrawl_client import FirecrawlError
+
+    def handler(request):
+        return httpx.Response(400, json={"error": "Unrecognized key: parsePDF"})
+
+    client = make_client(tmp_path, handler)
+    with pytest.raises(FirecrawlError) as exc:
+        client.search("anything")
+    assert "Unrecognized key: parsePDF" in str(exc.value)
+    assert "400" in str(exc.value)
+
+
+def test_scrape_falls_back_when_the_richest_payload_is_rejected(tmp_path):
+    seen = []
+
+    def handler(request):
+        payload = json.loads(request.content)
+        seen.append(sorted(payload))
+        if "parsers" in payload or "parsePDF" in payload:
+            return httpx.Response(400, json={"error": "Unrecognized key"})
+        return httpx.Response(200, json=SCRAPE_PAYLOAD)
+
+    client = make_client(tmp_path, handler)
+    document = client.scrape("https://www.adcb.com/x")
+    assert "3% cashback" in document.content
+    assert len(seen) == 3, "should have tried parsers, then parsePDF, then plain"
+
+
+def test_scrape_raises_with_all_attempts_when_every_shape_fails(tmp_path):
+    from app.services.research.firecrawl_client import FirecrawlError
+
+    client = make_client(tmp_path, lambda r: httpx.Response(400, json={"error": "nope"}))
+    with pytest.raises(FirecrawlError) as exc:
+        client.scrape("https://www.adcb.com/x")
+    assert "Every scrape payload shape was rejected" in str(exc.value)
+    assert "nope" in str(exc.value)
+
+
+def test_4xx_is_not_retried(tmp_path):
+    """Retrying an identical malformed request only spends credits."""
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        return httpx.Response(400, json={"error": "bad"})
+
+    from app.services.research.firecrawl_client import DocumentCache, FirecrawlClient, FirecrawlError
+
+    client = FirecrawlClient(
+        api_key="k",
+        cache=DocumentCache(directory=str(tmp_path / "c2"), ttl_hours=1),
+        transport=httpx.MockTransport(handler),
+        max_retries=3,
+    )
+    with pytest.raises(FirecrawlError):
+        client.search("x")
+    assert calls["n"] == 1

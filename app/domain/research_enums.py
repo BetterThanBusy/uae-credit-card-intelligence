@@ -64,6 +64,7 @@ class RejectionReason(str, Enum):
     NON_OFFICIAL_SOURCE = "NON_OFFICIAL_SOURCE"
     MISSING_EVIDENCE = "MISSING_EVIDENCE"
     IMPLAUSIBLE_VALUE = "IMPLAUSIBLE_VALUE"
+    DOCUMENT_NOT_ABOUT_CARD = "DOCUMENT_NOT_ABOUT_CARD"
 
 
 # Fields without which a precise financial ranking is dishonest.
@@ -88,4 +89,17 @@ UNBOUNDED_QUALIFIERS = (
     "upto",
     "maximum of up to",
     "earn up to",
+)
+
+
+# Document types that legitimately cover a whole card portfolio rather than one
+# card. Evidence from these can be attributed to a card, but only at issuer
+# level and never as fully verified for that specific product.
+ISSUER_LEVEL_DOCUMENTS = frozenset(
+    {
+        DocumentType.SCHEDULE_OF_CHARGES.value,
+        DocumentType.CARD_TERMS.value,
+        DocumentType.REWARDS_TERMS.value,
+        DocumentType.KEY_FACTS.value,
+    }
 )

@@ -238,6 +238,7 @@ def _apply_category(
     outcome.category_breakdown.append(
         CategoryBreakdown(
             category=category,
+            scope="INTERNATIONAL" if label == "international" else None,
             monthly_spend=spend,
             rate_applied=rule.rate,
             rate_source_status=rule.verification_status,

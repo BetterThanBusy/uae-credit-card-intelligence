@@ -1,5 +1,5 @@
 {
-  "dataset_version": "2026-09-14.2",
+  "dataset_version": "2026-09-15.1",
   "country": "UAE",
   "research_notes": "Every value below was retrieved during research on 2026-09-14. Fields sourced from an official issuer page are tier 1; fields that could only be established from reputable secondary coverage are tier 5 and flagged PARTIALLY_VERIFIED. Nothing here is invented. Where research did not establish a value, the field is absent or explicitly UNKNOWN.",
   "cards": [
@@ -1326,6 +1326,674 @@
           "verification_status": "UNKNOWN"
         }
       ]
+    },
+    {
+      "card_id": "fab-cashback",
+      "card_name": "FAB Cashback Credit Card",
+      "issuer": "FAB",
+      "network": "Mastercard",
+      "card_type": "cashback",
+      "status": "PARTIALLY_VERIFIED",
+      "version": 1,
+      "retrieved_at": "2026-09-15T00:00:00Z",
+      "last_verified": "2026-09-15T00:00:00Z",
+      "notes": "Category rates, caps and the card-level ceiling are consistent across several independent secondary sources but were not established on an official FAB page for the conventional card during research. FAB's official Islamic variant page confirms the same three-category structure and the AED 3,000 minimum spend, with different cap amounts, so it is recorded as related-product context only.",
+      "reward_rules": [
+        {
+          "category": "groceries",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "dining",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "fashion",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "utilities",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Select-category rate."
+        },
+        {
+          "category": "fuel",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "Select-category rate."
+        },
+        {
+          "category": "government",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "telecom",
+          "scope": "DOMESTIC",
+          "rate": 0.0015,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "travel",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "online",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "entertainment",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "education",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "DOMESTIC",
+          "rate": 0.01,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "other",
+          "scope": "INTERNATIONAL",
+          "rate": 0.03,
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "3% on non-AED international spend."
+        }
+      ],
+      "card_level_caps": {
+        "monthly_cap_amount": 1000,
+        "cap_scope": "CARD_TOTAL",
+        "verification_status": "PARTIALLY_VERIFIED"
+      },
+      "min_monthly_spend_required": 3000,
+      "fees": [
+        {
+          "fee_type": "ANNUAL_FEE",
+          "amount": 315,
+          "unit": "AED",
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "AED 300 excluding VAT; AED 315 including 5% VAT. Both figures appear across sources and reconcile exactly."
+        },
+        {
+          "fee_type": "FX_FEE",
+          "amount": null,
+          "unit": "PERCENT",
+          "verification_status": "UNKNOWN",
+          "notes": "One secondary source quotes 2.61% 'onwards', which is not a determinate rate."
+        }
+      ],
+      "eligibility": {
+        "min_monthly_salary": 5000,
+        "min_age": 21,
+        "residency_required": true,
+        "verification_status": "PARTIALLY_VERIFIED"
+      },
+      "benefits": [
+        {
+          "benefit_type": "lounge_access",
+          "description": "Complimentary worldwide airport lounge access, up to 8 visits per year",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "benefit_type": "airport_transfer",
+          "description": "Two complimentary airport transfers per year",
+          "verification_status": "PARTIALLY_VERIFIED"
+        }
+      ],
+      "exclusions": [
+        "Cashback is credited as FAB Rewards rather than statement credit"
+      ],
+      "sources": [
+        {
+          "field_name": "reward_category",
+          "value": "supermarkets, dining, fashion at 5%",
+          "source_name": "FAB official Islamic Cashback card page (related product)",
+          "source_url": "https://www.bankfab.com/en-ae/islamic-banking/personal-islamic-banking/islamic-cards/cashback-islamic-credit-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "Official FAB page confirms the fuel, dining and groceries cashback structure and a minimum spend of AED 3,000 per month, for the Islamic variant."
+        },
+        {
+          "field_name": "reward_rate",
+          "value": "0.05",
+          "unit": "percentage",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/fab-cashback-credit-card/details",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "5% cashback on fashion, dining and grocery spends."
+        },
+        {
+          "field_name": "reward_cap",
+          "value": "150",
+          "unit": "AED per category per month",
+          "source_name": "DBRCalculator",
+          "source_url": "https://dbrcalculator.com/banking/credit-cards/fab-fab-cashback-credit-card/",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "Each 5% category is capped at AED 150 monthly."
+        },
+        {
+          "field_name": "reward_cap_card_total",
+          "value": "1000",
+          "unit": "AED per month",
+          "source_name": "DBRCalculator",
+          "source_url": "https://dbrcalculator.com/banking/credit-cards/fab-fab-cashback-credit-card/",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "Category caps sit within an overall ceiling of AED 1,000 per month."
+        },
+        {
+          "field_name": "min_monthly_spend",
+          "value": "3000",
+          "unit": "AED per month",
+          "source_name": "FAB official Islamic Cashback card page",
+          "source_url": "https://www.bankfab.com/en-ae/islamic-banking/personal-islamic-banking/islamic-cards/cashback-islamic-credit-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "A minimum spend criteria of AED 3,000 per month to be eligible to earn cashback."
+        },
+        {
+          "field_name": "international_reward_rate",
+          "value": "0.03",
+          "unit": "percentage",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/fab-cashback-credit-card/details",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "3% cashback on all non-AED international transactions."
+        },
+        {
+          "field_name": "annual_fee",
+          "value": "315",
+          "unit": "AED",
+          "source_name": "DBRCalculator",
+          "source_url": "https://dbrcalculator.com/banking/credit-cards/fab-fab-cashback-credit-card/",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "Listed annual fee of AED 315; other sources quote AED 300 excluding VAT."
+        },
+        {
+          "field_name": "eligibility_min_salary",
+          "value": "5000",
+          "unit": "AED per month",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/fab-cashback-credit-card/details",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "field_name": "fx_fee",
+          "value": "UNKNOWN",
+          "unit": "percentage",
+          "source_name": "not established",
+          "source_url": "https://www.bankfab.com/en-ae/personal/cards/credit-cards/cashback-credit-card",
+          "source_type": "official_product_page",
+          "source_tier": 1,
+          "verification_status": "UNKNOWN"
+        }
+      ]
+    },
+    {
+      "card_id": "cbd-super-saver",
+      "card_name": "CBD Super Saver Credit Card",
+      "issuer": "Commercial Bank of Dubai",
+      "network": "Visa",
+      "card_type": "cashback",
+      "status": "PARTIALLY_VERIFIED",
+      "version": 1,
+      "retrieved_at": "2026-09-15T00:00:00Z",
+      "last_verified": "2026-09-15T00:00:00Z",
+      "notes": "Tiered card. CBD's official cashback grid PDF confirms the B.E.S.T category set, the AED 3,000 minimum monthly spend, tier-based rates and the AED 150 per-category / AED 600 total monthly ceiling at the top tier. The individual tier bands and their lower caps come from secondary coverage.",
+      "reward_rules": [
+        {
+          "category": "utilities",
+          "scope": "DOMESTIC",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "monthly_cap_amount": 75,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 9999
+        },
+        {
+          "category": "utilities",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "monthly_cap_amount": 100,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 19999
+        },
+        {
+          "category": "utilities",
+          "scope": "DOMESTIC",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 20000,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "government",
+          "scope": "DOMESTIC",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "monthly_cap_amount": 75,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 9999
+        },
+        {
+          "category": "government",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "monthly_cap_amount": 100,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 19999
+        },
+        {
+          "category": "government",
+          "scope": "DOMESTIC",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 20000,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "telecom",
+          "scope": "DOMESTIC",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "monthly_cap_amount": 75,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 9999
+        },
+        {
+          "category": "telecom",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "monthly_cap_amount": 100,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 19999
+        },
+        {
+          "category": "telecom",
+          "scope": "DOMESTIC",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 20000,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "education",
+          "scope": "DOMESTIC",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "monthly_cap_amount": 75,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 9999
+        },
+        {
+          "category": "education",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "monthly_cap_amount": 100,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 19999
+        },
+        {
+          "category": "education",
+          "scope": "DOMESTIC",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 20000,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "groceries",
+          "scope": "DOMESTIC",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "monthly_cap_amount": 75,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 9999
+        },
+        {
+          "category": "groceries",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "monthly_cap_amount": 100,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 19999
+        },
+        {
+          "category": "groceries",
+          "scope": "DOMESTIC",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 20000,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "fuel",
+          "scope": "DOMESTIC",
+          "rate": 0.03,
+          "tier_min_monthly_spend": 3000,
+          "monthly_cap_amount": 75,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 9999
+        },
+        {
+          "category": "fuel",
+          "scope": "DOMESTIC",
+          "rate": 0.05,
+          "tier_min_monthly_spend": 10000,
+          "monthly_cap_amount": 100,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "tier_max_monthly_spend": 19999
+        },
+        {
+          "category": "fuel",
+          "scope": "DOMESTIC",
+          "rate": 0.1,
+          "tier_min_monthly_spend": 20000,
+          "monthly_cap_amount": 150,
+          "cap_scope": "PER_CATEGORY",
+          "min_monthly_spend_required": 3000,
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "category": "dining",
+          "scope": "DOMESTIC",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "Outside the B.E.S.T categories; spend still counts toward the tier threshold."
+        },
+        {
+          "category": "travel",
+          "scope": "DOMESTIC",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "Outside the B.E.S.T categories; spend still counts toward the tier threshold."
+        },
+        {
+          "category": "online",
+          "scope": "DOMESTIC",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "Outside the B.E.S.T categories; spend still counts toward the tier threshold."
+        },
+        {
+          "category": "fashion",
+          "scope": "DOMESTIC",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "Outside the B.E.S.T categories; spend still counts toward the tier threshold."
+        },
+        {
+          "category": "entertainment",
+          "scope": "DOMESTIC",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "Outside the B.E.S.T categories; spend still counts toward the tier threshold."
+        },
+        {
+          "category": "other",
+          "scope": "DOMESTIC",
+          "rate": 0.0,
+          "excluded": true,
+          "verification_status": "VERIFIED",
+          "notes": "Outside the B.E.S.T categories; spend still counts toward the tier threshold."
+        }
+      ],
+      "card_level_caps": {
+        "monthly_cap_amount": 600,
+        "cap_scope": "CARD_TOTAL",
+        "verification_status": "PARTIALLY_VERIFIED"
+      },
+      "min_monthly_spend_required": 3000,
+      "fees": [
+        {
+          "fee_type": "ANNUAL_FEE",
+          "amount": 420,
+          "unit": "AED",
+          "first_year_free": true,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "notes": "AED 420 including VAT from year two (AED 400 plus 5% VAT reconciles exactly). A spend-based waiver is referenced but its threshold was not established."
+        },
+        {
+          "fee_type": "FX_FEE",
+          "amount": 2.99,
+          "unit": "PERCENT",
+          "verification_status": "CONFLICTING",
+          "notes": "Two independent secondary sources state 2.99%. A third states 2.75% but describes it as a monthly rate, which conflates it with the interest rate. Not established officially."
+        }
+      ],
+      "eligibility": {
+        "min_monthly_salary": 5000,
+        "min_age": 21,
+        "residency_required": true,
+        "verification_status": "CONFLICTING",
+        "notes": "Most sources state AED 5,000; one states AED 8,000."
+      },
+      "benefits": [
+        {
+          "benefit_type": "lounge_access",
+          "description": "8 complimentary airport lounge visits per year",
+          "verification_status": "PARTIALLY_VERIFIED"
+        },
+        {
+          "benefit_type": "insurance",
+          "description": "Multi-trip travel insurance up to USD 500,000 for cardholder and family",
+          "verification_status": "VERIFIED"
+        },
+        {
+          "benefit_type": "cinema",
+          "description": "50% off up to 4 cinema tickets per month",
+          "verification_status": "PARTIALLY_VERIFIED"
+        }
+      ],
+      "exclusions": [
+        "Bill payments other than water and electricity are not eligible",
+        "Education payments outside schools, colleges and universities are not eligible"
+      ],
+      "sources": [
+        {
+          "field_name": "reward_category",
+          "value": "Bills, Education, Supermarket, Transport (fuel)",
+          "source_name": "CBD official Super Saver cashback grid (PDF)",
+          "source_url": "https://www.cbd.ae/docs/default-source/revamp-doc/supersaver-cashback-grid.pdf",
+          "source_type": "official_rewards_terms",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "Official grid defines the B.E.S.T categories and states the cashback percentage is tier-based and linked to monthly total spend."
+        },
+        {
+          "field_name": "min_monthly_spend",
+          "value": "3000",
+          "unit": "AED per month",
+          "source_name": "CBD official Super Saver cashback grid (PDF)",
+          "source_url": "https://www.cbd.ae/docs/default-source/revamp-doc/supersaver-cashback-grid.pdf",
+          "source_type": "official_rewards_terms",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "B.E.S.T categories subject to meeting the minimum monthly total spend of AED 3,000 across B.E.S.T and non-B.E.S.T categories."
+        },
+        {
+          "field_name": "reward_cap",
+          "value": "150",
+          "unit": "AED per category per month",
+          "source_name": "CBD official Super Saver cashback grid (PDF)",
+          "source_url": "https://www.cbd.ae/docs/default-source/revamp-doc/supersaver-cashback-grid.pdf",
+          "source_type": "official_rewards_terms",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "Maximum cashback per B.E.S.T category in a calendar month is capped up to AED 150 and a maximum of AED 600 across categories."
+        },
+        {
+          "field_name": "reward_cap_card_total",
+          "value": "600",
+          "unit": "AED per month",
+          "source_name": "CBD official Super Saver cashback grid (PDF)",
+          "source_url": "https://www.cbd.ae/docs/default-source/revamp-doc/supersaver-cashback-grid.pdf",
+          "source_type": "official_rewards_terms",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "A maximum of AED 600 across B.E.S.T categories in a calendar month."
+        },
+        {
+          "field_name": "reward_rate_tiers",
+          "value": "3% / 5% / 10% by monthly total spend",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/cbd-super-saver-credit-card",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "Official grid confirms tiers exist; band values and their lower caps come from secondary coverage."
+        },
+        {
+          "field_name": "reward_exclusions",
+          "value": "non-utility bills and non-school education excluded",
+          "source_name": "CBD official Super Saver cashback grid (PDF)",
+          "source_url": "https://www.cbd.ae/docs/default-source/revamp-doc/supersaver-cashback-grid.pdf",
+          "source_type": "official_rewards_terms",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "Bill payment transactions other than water and electricity shall not be considered for cashback."
+        },
+        {
+          "field_name": "annual_fee",
+          "value": "420",
+          "unit": "AED",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/cbd-super-saver-credit-card",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "PARTIALLY_VERIFIED",
+          "evidence": "Annual fee waived for the first year, then AED 420 a year thereafter."
+        },
+        {
+          "field_name": "fx_fee",
+          "value": "2.99",
+          "unit": "percentage",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/cbd-super-saver-credit-card",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "CONFLICTING",
+          "evidence": "States a 2.99% foreign currency transaction fee on international purchases; another source states 2.75%."
+        },
+        {
+          "field_name": "eligibility_min_salary",
+          "value": "5000",
+          "unit": "AED per month",
+          "source_name": "Kredit UAE card database",
+          "source_url": "https://kredit.ae/credit-cards/cbd-super-saver-credit-card",
+          "source_type": "secondary_comparison_site",
+          "source_tier": 5,
+          "verification_status": "CONFLICTING",
+          "evidence": "States AED 5,000 minimum monthly salary; one other source states AED 8,000."
+        },
+        {
+          "field_name": "cashback_redemption",
+          "value": "minimum AED 50 balance",
+          "source_name": "CBD official Super Saver FAQ (PDF)",
+          "source_url": "https://www.cbd.ae/docs/default-source/default-document-library/faqs-super-saver-wallet.pdf",
+          "source_type": "official_faq",
+          "source_tier": 2,
+          "verification_status": "VERIFIED",
+          "evidence": "A minimum cashback balance of AED 50 is required in the Super Saver Cashback Account before redemption."
+        }
+      ]
     }
   ],
   "reward_value_assumptions": [],
@@ -1340,26 +2008,12 @@
       "reason": "grocery co-brand and miles coverage"
     },
     {
-      "issuer": "First Abu Dhabi Bank",
-      "candidate_cards": [
-        "FAB Cashback Card"
-      ],
-      "reason": "flat-rate cashback comparator"
-    },
-    {
       "issuer": "Standard Chartered UAE",
       "candidate_cards": [
         "Simply Cash",
         "Smart Credit Card"
       ],
       "reason": "simple deterministic rules"
-    },
-    {
-      "issuer": "Commercial Bank of Dubai",
-      "candidate_cards": [
-        "Super Saver"
-      ],
-      "reason": "grocery and fuel specialisation"
     },
     {
       "issuer": "ADCB",

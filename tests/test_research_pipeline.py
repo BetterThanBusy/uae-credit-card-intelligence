@@ -246,3 +246,78 @@ def test_batch_survives_one_bank_blocking_access(session):
     by_slug = {c.card_slug: c for c in cards}
     assert by_slug["adcb-365-cashback"].modelable is True
     assert by_slug["hsbc-cashback"].modelable is False
+
+
+# --- discovery fallback: search is unreliable, map is not ----------------
+class ThinSearchClient(ReplayRetrievalClient):
+    """Reproduces the real failure: every query returns the same junk URLs."""
+
+    def __init__(self, documents, junk_urls, map_urls):
+        super().__init__(documents)
+        self.junk = junk_urls
+        self.map_urls = map_urls
+        self.map_calls = 0
+
+    def search(self, query, limit=10):
+        from app.services.research.firecrawl_client import SearchResult
+
+        return [SearchResult(url=u, title="") for u in self.junk]
+
+    def map_site(self, url, search=None, limit=50):
+        self.map_calls += 1
+        return self.map_urls
+
+
+PRODUCT_URL = "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card"
+
+
+def test_map_fallback_fires_when_search_returns_too_few_official_urls(session):
+    client = ThinSearchClient(
+        documents={PRODUCT_URL: RetrievedDocument(url=PRODUCT_URL, content=PRODUCT_PAGE)},
+        junk_urls=["https://www.adcb.com/en/personal/current-accounts/basic"],
+        map_urls=[PRODUCT_URL, "https://www.adcb.com/en/loans/personal"],
+    )
+    card = research_card(session, TARGET, client, StubExtractor(GOOD_ROWS))
+    assert client.map_calls >= 1, "map fallback should have fired"
+    assert card.evidence, "the product page should have been discovered via map"
+    assert card.modelable is True
+
+
+def test_map_fallback_does_not_fire_when_search_works(session):
+    good = "https://www.adcb.com/en/personal/cards/credit-cards/365-cashback-card"
+    other = "https://www.adcb.com/en/personal/cards/credit-cards/terms"
+    client = ThinSearchClient(
+        documents={
+            good: RetrievedDocument(url=good, content=PRODUCT_PAGE),
+            other: RetrievedDocument(url=other, content=PRODUCT_PAGE),
+        },
+        junk_urls=[good, other],
+        map_urls=["https://www.adcb.com/should-not-be-used"],
+    )
+    research_card(session, TARGET, client, StubExtractor(GOOD_ROWS))
+    assert client.map_calls == 0, "map costs a call; don't spend it when search worked"
+
+
+def test_relevance_ranking_prefers_card_pages_over_unrelated_products():
+    from app.services.research.orchestrator import _relevance
+
+    card_page = _relevance(PRODUCT_URL, TARGET)
+    terms_pdf = _relevance("https://www.adcb.com/docs/card-schedule-of-charges.pdf", TARGET)
+    current_account = _relevance("https://www.adcb.com/en/personal/current-accounts/basic", TARGET)
+    careers = _relevance("https://www.adcb.com/en/careers", TARGET)
+
+    assert card_page > terms_pdf > careers
+    assert current_account == 0, "unrelated products must score zero and be skipped"
+
+
+def test_map_results_are_still_filtered_to_official_domains(session):
+    client = ThinSearchClient(
+        documents={PRODUCT_URL: RetrievedDocument(url=PRODUCT_URL, content=PRODUCT_PAGE)},
+        junk_urls=[],
+        map_urls=["https://kredit.ae/adcb-365-cashback-credit-card", PRODUCT_URL],
+    )
+    research_card(session, TARGET, client, StubExtractor(GOOD_ROWS))
+    from app.db.research_models import ResearchDocument
+
+    domains = {d.domain for d in session.scalars(select(ResearchDocument))}
+    assert domains == {"adcb.com"}, f"non-official domain leaked through map: {domains}"

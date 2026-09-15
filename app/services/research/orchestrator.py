@@ -50,6 +50,9 @@ logger = logging.getLogger(__name__)
 
 TARGETS_FILE = Path(__file__).resolve().parents[3] / "app" / "data" / "research_targets.json"
 MAX_DOCUMENTS_PER_CARD = 8
+# Below this many official URLs, search is assumed to have failed and the
+# domain map is used instead.
+MIN_SEARCH_URLS = 2
 
 
 def load_targets(path: Path | None = None) -> dict:
@@ -68,6 +71,95 @@ def build_queries(target: dict, config: dict | None = None) -> list[str]:
         template.format(card_name=target["card_name"], domain=target["domain"])
         for template in config["query_templates"]
     ]
+
+
+# Words that mark a URL as worth retrieving for a card. A bank domain has
+# thousands of pages; these keep the scrape budget on the ones that carry terms.
+RELEVANCE_TOKENS = (
+    "credit-card", "credit_card", "creditcard", "cards", "card",
+    "cashback", "rewards", "charges", "tariff", "fees", "terms",
+    "key-facts", "keyfacts", "schedule",
+)
+
+
+def _relevance(url: str, target: dict) -> int:
+    """Rank a candidate URL. Higher is better; 0 means skip."""
+    lowered = url.lower()
+    score = 0
+    # strongest signal: the card's own name appears in the path
+    name_tokens = [t for t in target["card_name"].lower().replace("+", " plus ").split() if len(t) > 3]
+    score += sum(3 for t in name_tokens if t in lowered)
+    score += sum(1 for t in RELEVANCE_TOKENS if t in lowered)
+    if lowered.endswith(".pdf"):
+        score += 2  # terms and schedules of charges are usually PDFs
+    for noise in ("/current-accounts/", "/loans/", "/insurance/", "/mortgage", "/careers", "/branch"):
+        if noise in lowered:
+            score -= 5
+    return max(score, 0)
+
+
+def discover_urls(
+    client: RetrievalClient,
+    target: dict,
+    run: ResearchRun,
+    config: dict,
+    max_documents: int,
+) -> dict[str, str]:
+    """Find official URLs for a card.
+
+    Search first, because a good query is cheap and precise. But search engines
+    handle `site:` inconsistently and can return a bank's homepage for every
+    query, so when search yields too few official URLs we enumerate the domain
+    with Firecrawl's map endpoint and rank candidates by relevance instead.
+    Map costs one call and returns links without downloading them, so this is
+    cheaper than scraping hopefully.
+    """
+    discovered: dict[str, str] = {}
+
+    for query in build_queries(target, config):
+        run.queries_issued += 1
+        try:
+            results = client.search(query, limit=5)
+        except FirecrawlError as exc:
+            logger.warning("search failed for %s: %s", query, exc)
+            continue
+        for result in results:
+            if result.url in discovered:
+                continue
+            if not is_official_source(result.url, target["issuer"]):
+                continue  # secondary sites are discovery only, never scraped as authority
+            discovered[result.url] = result.title
+        if len(discovered) >= max_documents:
+            break
+
+    if len(discovered) >= MIN_SEARCH_URLS:
+        return discovered
+
+    logger.info(
+        "search returned only %s official URL(s) for %s; falling back to domain map",
+        len(discovered),
+        target["slug"],
+    )
+    candidates: list[tuple[int, str]] = []
+    for term in (target["card_name"], "credit card"):
+        try:
+            run.queries_issued += 1
+            links = client.map_site(f"https://www.{target['domain']}", search=term, limit=200)
+        except FirecrawlError as exc:
+            logger.warning("map failed for %s: %s", target["domain"], exc)
+            continue
+        for url in links:
+            if url in discovered or not is_official_source(url, target["issuer"]):
+                continue
+            score = _relevance(url, target)
+            if score > 0:
+                candidates.append((score, url))
+        if candidates:
+            break
+
+    for score, url in sorted(candidates, key=lambda c: -c[0])[:max_documents]:
+        discovered.setdefault(url, "")
+    return discovered
 
 
 def research_card(
@@ -106,22 +198,7 @@ def research_card(
     session.flush()
 
     # --- discovery -----------------------------------------------------
-    discovered: dict[str, str] = {}
-    for query in build_queries(target, config):
-        run.queries_issued += 1
-        try:
-            results = client.search(query, limit=5)
-        except FirecrawlError as exc:
-            logger.warning("search failed for %s: %s", query, exc)
-            continue
-        for result in results:
-            if result.url in discovered:
-                continue
-            if not is_official_source(result.url, target["issuer"]):
-                continue  # secondary sites are discovery only, never scraped as authority
-            discovered[result.url] = result.title
-        if len(discovered) >= max_documents:
-            break
+    discovered = discover_urls(client, target, run, config, max_documents)
 
     # --- retrieval + extraction ----------------------------------------
     outcomes_by_field: dict[str, list] = {}
@@ -197,7 +274,9 @@ def research_card(
             continue
 
         for candidate in extractor.extract(document):
-            outcome = verify_candidate(candidate, document.content, target["issuer"])
+            outcome = verify_candidate(
+                candidate, document.content, target["issuer"], target["card_name"]
+            )
             key = _field_key(candidate)
             outcomes_by_field.setdefault(key, []).append(outcome)
 

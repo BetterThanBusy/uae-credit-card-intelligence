@@ -29,9 +29,11 @@ from app.services.research.firecrawl_client import (  # noqa: E402
     DocumentCache,
     FirecrawlClient,
     FirecrawlError,
+    _looks_like_pdf,
 )
 from app.services.research.orchestrator import build_queries, find_target  # noqa: E402
 from app.services.research.verification import (  # noqa: E402
+    document_scope,
     is_official_source,
     verify_candidate,
 )
@@ -83,7 +85,12 @@ def main() -> int:
         print(f"    -> {len(found)} result(s)")
         for item in found[:5]:
             print(f"       {item.domain:<24} {item.url}")
-        results.extend(found)
+        seen = {r.url for r in results}
+        results.extend(r for r in found if r.url not in seen)
+    print(f"\n  {len(results)} unique URL(s) across {len(queries)} queries")
+    if len(results) <= 3:
+        print("  NOTE: every query returned the same few URLs. The site: operator may "
+              "not be narrowing results - check the product page is indexed.")
     if not results:
         fail(
             "search",
@@ -129,7 +136,7 @@ def main() -> int:
 
     # -- 4. PDF retrieval ------------------------------------------------
     stage("4. PDF RETRIEVAL")
-    pdf_urls = [r.url for r in official if r.url.lower().endswith(".pdf")]
+    pdf_urls = [r.url for r in official if _looks_like_pdf(r.url)]
     if not pdf_urls:
         print("  No PDF surfaced by these queries. Trying the PDF-specific query.")
         try:
@@ -138,7 +145,7 @@ def main() -> int:
                 for r in client.search(
                     f'"{target["card_name"]}" PDF site:{target["domain"]}', limit=5
                 )
-                if r.url.lower().endswith(".pdf")
+                if _looks_like_pdf(r.url)
                 and is_official_source(r.url, target["issuer"])
             ]
         except FirecrawlError as exc:
@@ -162,11 +169,23 @@ def main() -> int:
     extractor = get_extractor()
     print(f"  extractor: {type(extractor).__name__}")
     verified = rejected_count = 0
+    accepted: dict[str, set[str]] = {}
     for document in documents:
+        scope = document_scope(
+            document.content,
+            target["card_name"],
+            classify_document(document),
+            source_url=document.url,
+        )
+        print(f"\n  {document.url}")
+        print(f"    scope: {scope}"
+              + ("  <- does not mention this card; evidence will be refused" if scope == "NONE" else ""))
         candidates = extractor.extract(document)
-        print(f"\n  {document.url}\n    {len(candidates)} candidate(s)")
+        print(f"    {len(candidates)} candidate(s)")
         for candidate in candidates[:12]:
-            outcome = verify_candidate(candidate, document.content, target["issuer"])
+            outcome = verify_candidate(
+                candidate, document.content, target["issuer"], target["card_name"]
+            )
             mark = "OK  " if outcome.usable else "DROP"
             reason = outcome.rejection_reason.value if outcome.rejection_reason else ""
             print(
@@ -175,15 +194,38 @@ def main() -> int:
             )
             if outcome.usable:
                 verified += 1
+                accepted.setdefault(candidate.field_name, set()).add(str(candidate.value))
             else:
                 rejected_count += 1
     print(f"\n  usable={verified}  dropped={rejected_count}")
+
+    # An accepted field holding two different values is a contradiction, not a
+    # result. Silence here is how a current-account fee ends up on a credit card.
+    for field_name, values in accepted.items():
+        if len(values) > 1:
+            fail(
+                "contradiction",
+                f"{field_name} was accepted with {len(values)} different values "
+                f"{sorted(values)}. One extraction is wrong; do not trust this card.",
+            )
+
     if documents and verified == 0:
         fail(
             "verification",
             "Every candidate was dropped. Inspect the reasons above: repeated "
             "EVIDENCE_NOT_IN_DOCUMENT usually means the scraped markdown differs "
             "from what the extractor quoted.",
+        )
+    if documents and not any(
+        document_scope(d.content, target["card_name"], classify_document(d), source_url=d.url)
+        == "CARD"
+        for d in documents
+    ):
+        fail(
+            "discovery",
+            "Not one retrieved document mentions this card by name. Search found "
+            "pages on the right domain but about the wrong products. Fix discovery "
+            "before running the batch.",
         )
 
     # -- 8. cache behaviour ----------------------------------------------

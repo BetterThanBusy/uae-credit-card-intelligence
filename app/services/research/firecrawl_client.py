@@ -190,8 +190,22 @@ class FirecrawlClient:
                     time.sleep(2**attempt)
                     last_error = FirecrawlError("rate limited")
                     continue
-                response.raise_for_status()
+                if response.status_code >= 400:
+                    # The API explains exactly which field it rejected. Discarding
+                    # that body turns a one-line fix into a guessing game.
+                    raise FirecrawlError(
+                        f"{response.status_code} from {path}: {_error_detail(response)}"
+                    )
                 return response.json()
+            except FirecrawlError as exc:
+                # A 4xx is a request-shape problem. Retrying identical bad input
+                # just spends credits, so fail fast and report.
+                if "rate limited" not in str(exc):
+                    raise
+                last_error = exc
+                if attempt == self.max_retries - 1:
+                    break
+                time.sleep(2**attempt)
             except Exception as exc:  # noqa: BLE001
                 last_error = exc
                 if attempt == self.max_retries - 1:
@@ -223,9 +237,41 @@ class FirecrawlClient:
         cache_key = f"scrape::{url}::{','.join(sorted(formats))}"
         cached = self.cache.get(cache_key)
         if cached is None:
-            cached = self._post("/scrape", {"url": url, "formats": formats, "parsePDF": True})
+            cached = self._scrape_negotiated(url, formats)
             self.cache.set(cache_key, cached)
         return _document_from_scrape(url, cached)
+
+    def _scrape_negotiated(self, url: str, formats: list[str]) -> dict:
+        """Try the documented payload, then fall back on a 400.
+
+        Firecrawl has moved PDF handling between top-level `parsePDF` and a
+        `parsers` list across versions. Rather than pin one guess, try the
+        richest payload first and drop the optional keys if the API rejects
+        them. The minimal payload is the last attempt, and if that also fails
+        the error is raised with the API's own explanation attached.
+        """
+        attempts: list[dict] = [
+            {"url": url, "formats": formats, "parsers": ["pdf"]},
+            {"url": url, "formats": formats, "parsePDF": True},
+            {"url": url, "formats": formats},
+            {"url": url},
+        ]
+        errors: list[str] = []
+        for payload in attempts:
+            try:
+                result = self._post("/scrape", payload)
+            except FirecrawlNotConfigured:
+                raise
+            except FirecrawlError as exc:
+                errors.append(f"{sorted(payload)} -> {exc}")
+                continue
+            if len(attempts) > 1 and payload is not attempts[0]:
+                logger.info("scrape succeeded with reduced payload: %s", sorted(payload))
+            return result
+        raise FirecrawlError(
+            "Every scrape payload shape was rejected for "
+            f"{url}. Attempts: " + " | ".join(errors)
+        )
 
     def map_site(self, url: str, search: str | None = None, limit: int = 50) -> list[str]:
         """List URLs on a domain without downloading them. Cheap discovery."""
@@ -315,6 +361,25 @@ def get_retrieval_client() -> RetrievalClient:
 
 
 # -- response shape helpers ---------------------------------------------
+def _looks_like_pdf(url: str) -> str:
+    """A .pdf with ?referrer=... still ends in the query string, not '.pdf'."""
+    from urllib.parse import urlparse
+
+    return urlparse(url).path.lower().endswith(".pdf")
+
+
+def _error_detail(response) -> str:
+    """The API's own message, trimmed. Never swallowed."""
+    try:
+        body = response.json()
+    except Exception:  # noqa: BLE001
+        return (response.text or "<empty body>")[:400]
+    for key in ("error", "message", "detail", "details"):
+        if key in body:
+            return str(body[key])[:400]
+    return str(body)[:400]
+
+
 def _search_items(payload: dict) -> list[dict]:
     data = payload.get("data", payload)
     if isinstance(data, dict):
@@ -333,7 +398,7 @@ def _document_from_scrape(url: str, payload: dict) -> RetrievedDocument:
         url=metadata.get("sourceURL") or metadata.get("url") or url,
         content=content,
         title=metadata.get("title", ""),
-        content_type="pdf" if url.lower().endswith(".pdf") else "html",
+        content_type="pdf" if _looks_like_pdf(url) else "html",
         status_code=metadata.get("statusCode"),
         metadata=metadata,
     )

@@ -182,3 +182,189 @@ def test_no_usable_outcomes_resolves_to_unknown():
         candidate(field_name="fx_fee"), ResearchVerification.UNKNOWN
     )
     assert resolve_field([rejected]).status is ResearchVerification.UNKNOWN
+
+
+# --- card-relevance gate -------------------------------------------------
+# Regression for a live failure: a basic current-account page on an official
+# bank domain supplied fx_fee=3 AND fx_fee=20, both stamped VERIFIED_OFFICIAL,
+# and both attributed to a credit card.
+CURRENT_ACCOUNT_PAGE = (
+    "HSBC Basic Current Account. A foreign transaction fee of 3 percent applies. "
+    "Withdrawals abroad are charged 20 AED per transaction. "
+    "A minimum monthly spend of 1 transaction keeps the account active."
+)
+
+CARD_PAGE = (
+    "HSBC Live+ Credit Card. Earn 6% cashback on dining. "
+    "A foreign transaction fee of 3 percent applies to non-AED spends."
+)
+
+SCHEDULE_OF_CHARGES = (
+    "HSBC UAE Schedule of Services and Tariffs. Credit card cardholder charges. "
+    "A foreign transaction fee of 3 percent applies to non-AED spends."
+)
+
+
+def fx_candidate(url, evidence, doc_type="PRODUCT_PAGE"):
+    return ExtractionCandidate(
+        field_name="fx_fee",
+        value="3",
+        unit="PERCENT",
+        source_url=url,
+        evidence_text=evidence,
+        document_type=doc_type,
+    )
+
+
+def test_unrelated_product_page_cannot_supply_card_evidence():
+    outcome = verify_candidate(
+        fx_candidate(
+            "https://www.hsbc.ae/current-accounts/products/basic/",
+            "A foreign transaction fee of 3 percent applies.",
+        ),
+        CURRENT_ACCOUNT_PAGE,
+        "HSBC UAE",
+        "HSBC Live+ Credit Card",
+    )
+    assert outcome.status is ResearchVerification.UNKNOWN
+    assert outcome.rejection_reason is RejectionReason.DOCUMENT_NOT_ABOUT_CARD
+
+
+def test_page_naming_the_card_is_verified_official():
+    outcome = verify_candidate(
+        fx_candidate(
+            "https://www.hsbc.ae/credit-cards/products/live-plus/",
+            "A foreign transaction fee of 3 percent applies to non-AED spends.",
+        ),
+        CARD_PAGE,
+        "HSBC UAE",
+        "HSBC Live+ Credit Card",
+    )
+    assert outcome.status is ResearchVerification.VERIFIED_OFFICIAL
+
+
+def test_issuer_wide_schedule_is_accepted_but_only_partially():
+    """A schedule of charges covers the portfolio, so it cannot be claimed as
+    confirmed for one specific card."""
+    outcome = verify_candidate(
+        fx_candidate(
+            "https://www.hsbc.ae/docs/tariffs.pdf",
+            "A foreign transaction fee of 3 percent applies to non-AED spends.",
+            doc_type="SCHEDULE_OF_CHARGES",
+        ),
+        SCHEDULE_OF_CHARGES,
+        "HSBC UAE",
+        "HSBC Live+ Credit Card",
+    )
+    assert outcome.status is ResearchVerification.PARTIALLY_VERIFIED
+    assert outcome.is_official
+    assert "not confirmed for this specific product" in outcome.detail
+
+
+def test_card_name_variants_match_plus_and_spacing():
+    from app.services.research.verification import document_scope
+
+    assert document_scope(
+        "The Live Plus card offers cashback.", "HSBC Live+ Credit Card", "PRODUCT_PAGE",
+        evidence_text="offers cashback.",
+    ) == "CARD"
+    assert document_scope(
+        "Our Live+ card offers cashback.", "HSBC Live+ Credit Card", "PRODUCT_PAGE",
+        evidence_text="offers cashback.",
+    ) == "CARD"
+    assert document_scope("A savings account page.", "HSBC Live+ Credit Card", "PRODUCT_PAGE") == "NONE"
+
+
+def test_generic_words_alone_do_not_count_as_a_card_match():
+    from app.services.research.verification import document_scope
+
+    scope = document_scope(
+        "This page mentions credit and card and fees.", "ADCB 365 Cashback Credit Card", "PRODUCT_PAGE"
+    )
+    assert scope == "NONE"
+
+
+def test_gate_is_optional_so_existing_callers_are_unaffected():
+    outcome = verify_candidate(
+        fx_candidate("https://www.hsbc.ae/anything", "A foreign transaction fee of 3 percent applies."),
+        CURRENT_ACCOUNT_PAGE,
+        "HSBC UAE",
+    )
+    assert outcome.status is ResearchVerification.VERIFIED_OFFICIAL
+
+
+# --- navigation menus must not qualify a page ----------------------------
+# Regression for a live failure: HSBC's global nav links to Live+ on every
+# page, so a basic current-account page "mentioned" the card and its fees were
+# accepted as the card's own.
+NAV = "Home. Credit cards: HSBC Live+ Credit Card. Loans. Savings. "
+ACCOUNT_BODY = (
+    "HSBC Basic Current Account. " + ("Account information. " * 200)
+    + "A foreign transaction fee of 3 percent applies to this account."
+)
+
+
+def test_navigation_mention_does_not_make_a_page_about_the_card():
+    from app.services.research.verification import document_scope
+
+    scope = document_scope(
+        NAV + ACCOUNT_BODY,
+        "HSBC Live+ Credit Card",
+        "PRODUCT_PAGE",
+        source_url="https://www.hsbc.ae/current-accounts/products/basic/",
+        evidence_text="A foreign transaction fee of 3 percent applies to this account.",
+    )
+    assert scope == "NONE"
+
+
+def test_current_account_fee_is_refused_end_to_end():
+    outcome = verify_candidate(
+        ExtractionCandidate(
+            field_name="fx_fee",
+            value="3",
+            unit="PERCENT",
+            source_url="https://www.hsbc.ae/current-accounts/products/basic/",
+            evidence_text="A foreign transaction fee of 3 percent applies to this account.",
+            document_type="PRODUCT_PAGE",
+        ),
+        NAV + ACCOUNT_BODY,
+        "HSBC UAE",
+        "HSBC Live+ Credit Card",
+    )
+    assert outcome.status is ResearchVerification.UNKNOWN
+    assert outcome.rejection_reason is RejectionReason.DOCUMENT_NOT_ABOUT_CARD
+
+
+def test_url_naming_the_card_is_sufficient():
+    from app.services.research.verification import document_scope
+
+    scope = document_scope(
+        "Fees and charges apply. A foreign transaction fee of 3 percent applies.",
+        "HSBC Live+ Credit Card",
+        "PRODUCT_PAGE",
+        source_url="https://www.hsbc.ae/credit-cards/products/live-plus/",
+        evidence_text="A foreign transaction fee of 3 percent applies.",
+    )
+    assert scope == "CARD"
+
+
+def test_evidence_next_to_a_card_mention_qualifies():
+    from app.services.research.verification import document_scope
+
+    body = "HSBC Live+ Credit Card. Earn 6% on dining. A foreign transaction fee of 3 percent applies."
+    scope = document_scope(
+        body,
+        "HSBC Live+ Credit Card",
+        "PRODUCT_PAGE",
+        source_url="https://www.hsbc.ae/some/other/path/",
+        evidence_text="A foreign transaction fee of 3 percent applies.",
+    )
+    assert scope == "CARD"
+
+
+def test_repeated_mentions_qualify_when_no_evidence_is_supplied():
+    from app.services.research.verification import document_scope
+
+    body = "HSBC Live+ Credit Card. " * 4 + "Cashback details."
+    assert document_scope(body, "HSBC Live+ Credit Card", "PRODUCT_PAGE") == "CARD"
+    assert document_scope(NAV + "Savings only.", "HSBC Live+ Credit Card", "PRODUCT_PAGE") == "NONE"
